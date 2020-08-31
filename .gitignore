@@ -1,3 +1,5 @@
 *logs/
 *.ini
 .vscode
+*llf.code-workspace
+*__pycache__/

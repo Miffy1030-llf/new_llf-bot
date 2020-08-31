@@ -1,0 +1,11 @@
+[mirai]
+host=0
+port=0
+authKey=001075719810
+
+[mongodb]
+host=0
+port=27017
+db=0
+user=miffy
+passwd=0
