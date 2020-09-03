@@ -102,3 +102,73 @@ class mongodb(object):
             return pk_list
         except Exception as e:
             return -1
+        
+    @logger.catch
+    def get_total_count_and_money_this_pro(self, pid):
+        try:
+            rank = self.get_rank_this_pro(pid)
+            count = len(rank)
+            money = 0
+            for r in rank:
+                money += r["total"]
+            logger.debug("get count and money for {}".format(pid))
+            return count, round(money, 1)
+        except Exception as e:
+            logger.debug("[ERROR]get count and money for {}".format(pid))
+            logger.exception(e)
+            return -1
+
+    @logger.catch
+    def get_rank_this_pro(self, pid):
+        try:
+            person_after_rank = self.db['items'].aggregate(
+                [
+                    {
+                        "$match": {
+                            "pro_id": pid
+                        }
+                    },
+                    {
+                        "$group": {
+                            "_id": "$user_id",
+                            "total": {"$sum": "$amount"},
+                        }
+                    },
+                    {
+                        "$sort": {
+                            "total": -1
+                        }
+                    }
+
+                ]
+            )
+            person_after_rank_list = []
+            for r in person_after_rank:
+                person_after_rank_list.append(r)
+            logger.debug("get rank in raise:{}".format(pid))
+            return person_after_rank_list
+        except Exception as e:
+            logger.debug("[ERROR]get rank in raise:{}".format(pid))
+            logger.exception(e)
+            return -1
+        
+    @logger.catch
+    def get_person_money_and_rank_this_pro(self, pid, uid):
+        try:
+            rank = self.get_rank_this_pro(pid)
+            for i in range(len(rank)):
+                if rank[i].get("_id") == uid:
+                    logger.debug("get {} rank and money in raise {}".format(uid, pid))
+                    return i+1, rank[i].get("total")
+
+        except Exception as e:
+            logger.debug("[ERROR] get {} rank and money in raise {}".format(uid, pid))
+            logger.exception(e)
+            return -1
+        
+    @logger.catch
+    def update_raise(self, pid, money, head_num):
+        try:
+            self.db["monitor"].update_one({"pro_id": pid}, {"$set": {"current": money, "total": head_num}})
+        except Exception as e:
+            logger.exception(e)

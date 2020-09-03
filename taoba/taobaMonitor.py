@@ -1,5 +1,5 @@
 
-from taoba.Crawler import GetPurchaseList, GetDetail, GetGoodDetail,GetPurchaseListWithoutCurrent
+from taoba.Crawler import GetPurchaseList, GetDetail, GetGoodDetail
 from taoba.Structure import rankingModel
 from taoba.owhatCrawler import getOwhatSales
 import shared.Util as util
@@ -20,7 +20,7 @@ class TaobaMonitor(object):
             if raise_list != -1:
                 for i in range(len(raise_list)):
                     _raise = raise_list[i]
-                    ul = GetPurchaseListWithoutCurrent(_raise)
+                    ul = GetPurchaseList(_raise)
                     detail = GetDetail(_raise)
                     self.db.insert_raise(detail)
                     if ul:
@@ -43,9 +43,9 @@ class TaobaMonitor(object):
                                 total = self.db.get_total_count_and_money_this_pro(
                                     _raise)
                                 if user_name:
-                                    l, rank = self.db.get_item_this_pro(_raise, 0)
+                                    # l, rank = self.db.get_item_this_pro(_raise, 0)
                                     
-                                    msg = "感谢{}, Ta刚刚在{}中集资 序号{}\n".format(user_name,detail.title, rank)
+                                    msg = "感谢{}, Ta刚刚在{}中集资\n".format(user_name,detail.title)
                                 if total != -1:
                                     url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
                                     msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
@@ -56,10 +56,9 @@ class TaobaMonitor(object):
 
                                     msg3 = "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n链接{}\n截止{}".format(money, head_num, round(
                                         money / head_num, 1), url, util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
-                                    self.db.db["monitor"].update_one(
-                                        {"pro_id": _raise}, {"$set": {"current": money, "total": head_num}})
-                                    self.bot.send_group_message(
-                                        self.qqgroup, msg1 + msg2 + msg3)
+                                    self.db.update_raise(_raise, money, head_num)
+                                    # self.bot.send_group_message(
+                                    #     self.qqgroup, msg1 + msg2 + msg3)
 
                             #         data_relay = {
                             #             103: 0, 51.5: 0, 10.3: 0, 1030: 0}

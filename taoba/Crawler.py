@@ -93,39 +93,12 @@ def GetPurchaseList(pro_id:str):
         pages = 0
         while not Cleared:
             for thisRecord in Response['list']:
+                money = 0 if '*' in thisRecord['money'] else float(thisRecord['money'])
                 Founderlist.append(Record(pro_id,
                     str(thisRecord['userid']),
                     thisRecord['nick'],
                     thisRecord['stime'],
-                    float(thisRecord['money'])
-                    
-                ))
-            if len(Response['list']) == 15:
-                pages += 1
-                Data='{{"ismore":true,"limit":15,"id":"{0}","offset":{2},"requestTime":{1},"pf":"h5"}}'.format(pro_id,int(time.time()*1000),pages*15)
-                Response=SendRequest('https://www.tao-ba.club/idols/join',Data)
-            else:
-                Cleared = True
-        return Founderlist
-    except Exception as e:
-        print(e)
-
-@logger.catch
-def GetPurchaseListWithoutCurrent(pro_id:str):
-    #获得所有人购买的数据，以list形式返回
-    try:
-        Data='{{"ismore":false,"limit":15,"id":"{0}","offset":0,"requestTime":{1},"pf":"h5"}}'.format(pro_id,int(time.time()*1000))
-        Response=SendRequest('https://www.tao-ba.club/idols/join',Data)
-        Founderlist = []
-        Cleared = False
-        pages = 0
-        while not Cleared:
-            for thisRecord in Response['list']:
-                Founderlist.append(Record(pro_id,
-                    str(thisRecord['userid']),
-                    thisRecord['nick'],
-                    thisRecord['stime'],
-                    0
+                    money
                     
                 ))
             if len(Response['list']) == 15:
@@ -152,4 +125,5 @@ def GetGoodDetail(pro_id:str):
 if __name__ == "__main__":
     # print(GetPurchaseList("3487"))
     # print(GetDetail("3487"))
-    GetGoodDetail("4830")
+    # GetGoodDetail("4830")
+    GetPurchaseList("8447")
