@@ -3,3 +3,5 @@
 .vscode
 *llf.code-workspace
 *__pycache__/
+*.sh
+*.pyc
