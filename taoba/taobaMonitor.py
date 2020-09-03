@@ -6,7 +6,7 @@ import shared.Util as util
 import shared.mongoDB as mongo
 import time
 import bot.GraiaBot as bGraia
-
+import shared.QQGroup as qqgroup
 
 
 class TaobaMonitor(object):
@@ -44,22 +44,29 @@ class TaobaMonitor(object):
                                     _raise)
                                 if user_name:
                                     # l, rank = self.db.get_item_this_pro(_raise, 0)
-                                    
                                     msg = "感谢{}, Ta刚刚在{}中集资\n".format(user_name,detail.title)
-                                if total != -1:
-                                    url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
-                                    msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
-                                        user_name, detail.title, round(ul[i].amount, 1), round(user_data[1], 1), user_data[0])
-                                    msg2 = "*" * 20
+                                    if total != -1:
+                                        # msg += "*" * 20
 
-                                    head_num, money = total[0], total[1]
+                                        head_num, money = total[0], total[1]
 
-                                    msg3 = "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n链接{}\n截止{}".format(money, head_num, round(
-                                        money / head_num, 1), url, util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
-                                    self.db.update_raise(_raise, money, head_num)
-                                    # self.bot.send_group_message(
-                                    #     self.qqgroup, msg1 + msg2 + msg3)
+                                        msg += "当前集资参与人数:{}\n".format(head_num)
+                                        self.db.update_raise(_raise, money, head_num)
+                                        self.bot.send_group_message(qqgroup.tb_groups, msg)
+                                # if total != -1:
+                                #     url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
+                                #     msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
+                                #         user_name, detail.title, round(ul[i].amount, 1), round(user_data[1], 1), user_data[0])
+                                #     msg2 = "*" * 20
 
+                                #     head_num, money = total[0], total[1]
+
+                                #     msg3 = "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n链接{}\n截止{}".format(money, head_num, round(
+                                #         money / head_num, 1), url, util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
+                                #     self.db.update_raise(_raise, money, head_num)
+                                #     self.bot.send_group_message(
+                                #         qqgroup.tb_groups, msg1 + msg2 + msg3)
+                                
                             #         data_relay = {
                             #             103: 0, 51.5: 0, 10.3: 0, 1030: 0}
                             #         data_head = {
@@ -249,59 +256,5 @@ class TaobaMonitor(object):
         except Exception as e:
             return
 
-
-class taobaRank(rankingModel):
-    def get_amount(self):
-        detail = GetDetail(self.pid)
-        return round(float(detail.current), 2)
-
-
-class owhatRank(rankingModel):
-    def get_amount(self):
-        amount = getOwhatSales(self.pid)
-        return amount
-
-
-class PKMonitor(object):
-    def get_pk_detail(self, plantform_type, pid, name):
-        if plantform_type == 0:
-            pk = taobaRank(name, pid)
-
-        elif plantform_type == 1:
-            pk = owhatRank(name, pid)
-
-        amount = pk.get_amount()
-        return {"name": name, "amount": amount}
-
-
 if __name__ == '__main__':
     TaobaMonitor().start_monitor()
-    # TaobaMonitor().updatePK()
-    # u = GetPurchaseList("4881")
-    # TaobaMonitor().get_data_of_raise("4492")
-    # user_data = MongodbManager().get_rank_this_pro("2370")
-    # for u in user_data:
-    #     print(u)
-    # print(TaobaMonitor().get_pk())
-    # relay, head = TaobaMonitor().get_data_of_raise("4141")
-    # msg = "2020.6.6 22:33之后接棒统计:\n"
-    # # relay = sorted(relay,reverse=True)
-    # for key, value in sorted(relay.items(),reverse=True):
-    #     if value > 0:
-    #         msg += "{}元棒数:{}\n".format(key, value)
-    # msg += "人数统计:\n"
-    # for key, value in head.items():
-    #     if value > 0:
-    #         msg += "{}元人数:{}\n".format(key, value)
-    # print(msg)
-    # l = GetPurchaseList("4141")
-    # a = set()
-    # for i in l:
-    #     a.add(i.user_id)
-    # print(len(a))
-
-    # item_list = TaobaMonitor().db.get_item_this_pro("4492",1592052015)
-    # s = sum([x["amount"] for x in item_list])
-    # fms = "20:40 - 21:40 2:1追加 当前额度{}".format(round(s,1))
-    # print(fms)
-    # https://www.taoba.club/index/#/pages/idols/detail?id=6535  10972009 姜杉大粉变bp不投票了
