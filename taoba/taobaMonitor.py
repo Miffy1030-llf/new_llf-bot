@@ -52,7 +52,10 @@ class TaobaMonitor(object):
 
                                         msg += "当前集资参与人数:{}\n".format(head_num)
                                         self.db.update_raise(_raise, money, head_num)
-                                        self.bot.send_group_message(qqgroup.tb_groups, msg)
+                                        if _raise == "8876":
+                                            self.bot.send_group_message([920604316], msg)
+                                        else:
+                                            self.bot.send_group_message(qqgroup.tb_groups, msg)
                                 # if total != -1:
                                 #     url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
                                 #     msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
