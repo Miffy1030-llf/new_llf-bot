@@ -42,7 +42,22 @@ async def group_message_handler(app: bGraia.GraiaMiraiApplication, message: bGra
             msg = pk.PK().format_msg()
             if msg:
                 await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
-@logger.catch
+                
+    if msg == '查询':
+        if group.id in qqgroup.tb_groups:
+            result = db.check_birth_status("8880")
+            if result != -1:
+                msg = "llf:{}\nxll:{}\nxyyz:{}\nllz:{}\nother:{}".format(result.get("llf"),result.get("xll"),result.get("xyyz"),result.get("llz"),result.get("other"))
+                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
+            else:
+                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("查询失败")]).asSendable())
+        if group.id == 920604316:
+            result = db.check_birth_status("8876")
+            if result != -1:
+                msg = "llf:{}\nxll:{}\nxyyz:{}\nllz:{}\nother:{}".format(result.get("llf"),result.get("xll"),result.get("xyyz"),result.get("llz"),result.get("other"))
+                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
+            else:
+                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("查询失败")]).asSendable())
 @bcc.receiver("MemberJoinEvent")
 async def group_member_join(app: bGraia.GraiaMiraiApplication, member: bGraia.Member, group: bGraia.Group):
     if group.id in qqgroup.vip_group:

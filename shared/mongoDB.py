@@ -172,3 +172,27 @@ class mongodb(object):
             self.db["monitor"].update_one({"pro_id": pid}, {"$set": {"current": money, "total": head_num}})
         except Exception as e:
             logger.exception(e)
+            
+    @logger.catch
+    def check_birth_status(self, pid):
+        try:
+            dic = {'xyyz':0,'xll':0,'llf':0,'llz':0,'other':0}
+            items = list(self.db["items"].find({"pro_id":pid},{"_id":0}))
+            for item in items:
+                name = item["nickname"].lower()
+                if 'xyyz' in name:
+                    dic['xyyz'] += 1
+                elif 'xll' in name:
+                    dic['xll'] += 1
+                elif 'llf' in name:
+                    dic['llf'] += 1
+                elif 'llz' in name:
+                    dic['llz'] += 1
+                else:
+                    dic["other"] += 1
+            return dic
+        except Exception as e:
+            return -1
+
+if __name__ == '__main__':
+    mongodb().check_birth_status("8880")
