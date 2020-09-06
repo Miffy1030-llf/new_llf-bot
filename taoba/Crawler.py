@@ -123,7 +123,7 @@ def GetGoodDetail(pro_id:str):
     return return_list
 
 if __name__ == "__main__":
-    # print(GetPurchaseList("3487"))
+    print(GetPurchaseList("8937"))
     # print(GetDetail("3487"))
     # GetGoodDetail("4830")
-    GetPurchaseList("8447")
+    GetGoodDetail("8937")

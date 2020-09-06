@@ -5,3 +5,5 @@
 *__pycache__/
 *.sh
 *.pyc
+*.txt
+*getData.py

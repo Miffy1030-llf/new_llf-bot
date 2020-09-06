@@ -17,9 +17,11 @@ class TaobaMonitor(object):
     def start_monitor(self):
         while True:
             raise_list = self.db.get_raise_list()
+            
             if raise_list != -1:
                 for i in range(len(raise_list)):
                     _raise = raise_list[i]
+                    resultList = GetGoodDetail(_raise)
                     ul = GetPurchaseList(_raise)
                     detail = GetDetail(_raise)
                     self.db.insert_raise(detail)
@@ -44,18 +46,51 @@ class TaobaMonitor(object):
                                     _raise)
                                 if user_name:
                                     # l, rank = self.db.get_item_this_pro(_raise, 0)
-                                    msg = "感谢{}, Ta刚刚在{}中集资\n".format(user_name,detail.title)
                                     if total != -1:
-                                        # msg += "*" * 20
-
-                                        head_num, money = total[0], total[1]
-
-                                        msg += "当前集资参与人数:{}\n".format(head_num)
-                                        self.db.update_raise(_raise, money, head_num)
-                                        if _raise == "8876":
-                                            self.bot.send_group_message([920604316], msg)
-                                        else:
+                                        msg = ""
+                                        if _raise == "8937":
+                                            gua_now = 0
+                                            hua_now = 0
+                                            
+                                            total_dict = {"gua":0,"hua":0,"other":0}
+                                            for res in resultList:
+                                                if "瓜" in res[0]:
+                                                    total_dict["gua"] += (int(res[1]) * float(res[2]))
+                                                    gua_now += int(res[1])
+                                                   
+                                                elif "花" in res[0]:
+                                                    total_dict["hua"] += (int(res[1]) * float(res[2]))
+                                                    hua_now += int(res[1])
+                                                    
+                                            record = self.db.db["config"].find_one({"gh":1})
+                                            hua = record.get("hua")
+                                            gua = record.get("gua")
+                                            if hua != hua_now:
+                                                msg = "感谢{}支持了菲菲是花阵营，花妈阵营加{}积分".format(user_name, round(ul[i].amount, 1))
+                                                self.db.db["config"].update({"gh":1},{"$set":{"hua":hua_now}})
+                                            elif gua != gua_now:
+                                                msg = "感谢{}支持了菲菲是瓜阵营，瓜妈阵营加{}积分".format(user_name, round(ul[i].amount, 1))
+                                                self.db.db["config"].update({"gh":1},{"$set":{"gua":gua_now}})
+                                            if total_dict.get("gua") >= total_dict.get("hua"):
+                                                msg += "\n当前排名：\n瓜妈阵营{}积分，\n花妈阵营{}积分".format(round(total_dict.get("gua"),1), round(total_dict.get("hua"),1))
+                                            else:
+                                                msg += "\n当前排名：\n花妈阵营{}积分，\n瓜妈阵营{}积分".format(round(total_dict.get("hua"),1), round(total_dict.get("gua"),1))
+                                            msg+="\npick🔗：https://www.taoba.club/index/#/pages/idols/detail?id=8937"
                                             self.bot.send_group_message(qqgroup.tb_groups, msg)
+                                        else:
+                                            msg = "感谢{}, Ta刚刚在{}中集资\n".format(user_name,detail.title)
+                                            # msg += "*" * 20
+
+                                            head_num, money = total[0], total[1]
+
+                                            msg += "当前集资参与人数:{}\n".format(head_num)
+                                            self.db.update_raise(_raise, money, head_num)
+                                            if _raise == "8876":
+                                                self.bot.send_group_message([920604316], msg)
+                                            if _raise == "8880":
+                                                self.bot.send_group_message([1084176330], msg)
+                                            # else:
+                                            #     self.bot.send_group_message(qqgroup.tb_groups, msg)
                                 # if total != -1:
                                 #     url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
                                 #     msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
