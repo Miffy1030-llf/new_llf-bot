@@ -5,6 +5,7 @@ import shared.QQGroup as qqgroup
 from loguru import logger
 import os
 import taoba.PKItem as pk
+from taoba.Crawler import GetPurchaseList
 bcc = bGraia.bcc
 db = mongoDB.mongodb()
 logger.add(os.path.join(os.path.dirname(__file__),"logs","autobot.log"),
@@ -44,17 +45,18 @@ async def group_message_handler(app: bGraia.GraiaMiraiApplication, message: bGra
                 await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
                 
     if msg == '查询':
-        if group.id in qqgroup.tb_groups:
-            result = db.check_birth_status("8880")
+        await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("查询中...")]).asSendable())
+        if group.id == 1084176330:
+            result = check_birth_status("8880")
             if result != -1:
-                msg = "llf:{}\nxll:{}\nxyyz:{}\nllz:{}\nother:{}".format(result.get("llf"),result.get("xll"),result.get("xyyz"),result.get("llz"),result.get("other"))
+                msg = "llf:{}\nxll:{}\nxyyz:{}\nllz:{}\nother:{}".format(len(result.get("llf")),len(result.get("xll")),len(result.get("xyyz")),len(result.get("llz")),len(result.get("other")))
                 await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
             else:
                 await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("查询失败")]).asSendable())
         if group.id == 920604316:
-            result = db.check_birth_status("8876")
+            result = check_birth_status("8876")
             if result != -1:
-                msg = "llf:{}\nxll:{}\nxyyz:{}\nllz:{}\nother:{}".format(result.get("llf"),result.get("xll"),result.get("xyyz"),result.get("llz"),result.get("other"))
+                msg = "llf:{}\nxll:{}\nxyyz:{}\nllz:{}\nother:{}".format(len(result.get("llf")),len(result.get("xll")),len(result.get("xyyz")),len(result.get("llz")),len(result.get("other")))
                 await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
             else:
                 await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("查询失败")]).asSendable())
@@ -71,5 +73,35 @@ async def group_member_join(app: bGraia.GraiaMiraiApplication, member: bGraia.Me
                     '''
         msg = bGraia.MessageChain.create([bGraia.Plain("欢迎新聚聚："), bGraia.At(member.id), bGraia.Plain(wel)]).asSendable()
         app.sendGroupMessage(group, msg)
-    
+
+def check_birth_status(pid):
+    xll_list = GetPurchaseList(pid)
+    allitems = {}
+
+    for item in xll_list:
+        allitems[item.user_id] = item.nickname
+
+    llf_list = list(db.db["items"].find({"pro_id":pid}))
+    for item in llf_list:
+        name = item.get("nickname").lower()
+        if item.get("user_id") in allitems.keys():
+            if "llf" in name or "xyyz" in name or "xll" in name or "llz" in name or "刘令姿" in name:
+                allitems[item.get(item.get("user_id"))] = name
+        else:
+            allitems[item.get(item.get("user_id"))] = name
+            
+    result = {"llf":[], "xll":[], "xyyz":[], "llz":[],"other":[]}   
+    for uid, name in allitems.items():
+        r = "{}\t{}\n".format(uid, name)
+        if "llf" in name.lower():
+            result["llf"].append(r)
+        elif "xll" in name.lower():
+            result["xll"].append(r)
+        elif "xyyz" in name.lower():
+            result["xyyz"].append(r)
+        elif "llz" in name.lower() or "刘令姿" in name.lower():
+            result["llz"].append(r)
+        else:
+            result["other"].append(r)
+    return result
 bot.app.launch_blocking()
