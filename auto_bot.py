@@ -46,6 +46,7 @@ async def group_message_handler(app: bGraia.GraiaMiraiApplication, message: bGra
        
     elif "GNZ48-刘力菲正在直播" in msg:
         if group.id == 244898692:
+            bot.send_temp_message(group,[826425389,1075719810],message.asSendable())
             bot.send_group_message(qqgroup.vip_group, message.asSendable())  
 
 @bcc.receiver("MemberJoinEvent")

@@ -68,10 +68,14 @@ class GraiaBot(object):
     async def sync_ac(self):
         await self.app.activeSession()
     @force_sync
-    async def sync_send_group_message(self, qq, message):
-        message = MessageChain.create([Plain(message)]).asSendable()
+    async def sync_send_group_message(self, qq, msg):
+        message = MessageChain.create([Plain(msg)]).asSendable()
         await self.app.sendGroupMessage(qq, message)
-
+    @force_sync
+    async def sync_send_temp_message(self, group, qq, msg):
+        message = MessageChain.create([Plain(msg)]).asSendable()
+        await self.app.sendTempMessage(group, qq, message)
+        
     def activate(self):
         self.sync_auth()
         self.sync_ac()
@@ -80,3 +84,11 @@ class GraiaBot(object):
         self.activate()
         for qq in qqGroups:
             self.sync_send_group_message(qq, message)
+
+    def send_temp_message(self, group, qqs, message):
+        self.activate()
+        for qq in qqs:
+            self.sync_send_temp_message(group, qq, message)
+            
+if __name__ == "__main__":
+    GraiaBot().send_temp_message(1084176330, [1075719810], "test")
