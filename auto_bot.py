@@ -38,28 +38,16 @@ async def group_message_handler(app: bGraia.GraiaMiraiApplication, message: bGra
                     await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
             except Exception as e:
                 await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("现在没有jz，怎么能没有呢，快喊管理员")]).asSendable())
-    if msg == "pk" or msg == "PK":
+    elif msg == "pk" or msg == "PK":
         if group.id in qqgroup.pk_groups:
             msg = pk.PK().format_msg()
             if msg:
                 await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
-                
-    if msg == '查询':
-        await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("查询中...")]).asSendable())
-        if group.id == 1084176330:
-            result = check_birth_status("8880")
-            if result != -1:
-                msg = "llf:{}\nxll:{}\nxyyz:{}\nllz:{}\nother:{}".format(len(result.get("llf")),len(result.get("xll")),len(result.get("xyyz")),len(result.get("llz")),len(result.get("other")))
-                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
-            else:
-                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("查询失败")]).asSendable())
-        if group.id == 920604316:
-            result = check_birth_status("8876")
-            if result != -1:
-                msg = "llf:{}\nxll:{}\nxyyz:{}\nllz:{}\nother:{}".format(len(result.get("llf")),len(result.get("xll")),len(result.get("xyyz")),len(result.get("llz")),len(result.get("other")))
-                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
-            else:
-                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain("查询失败")]).asSendable())
+       
+    elif "GNZ48-刘力菲正在直播" in msg:
+        if group.id == 244898692:
+            bot.send_group_message(qqgroup.vip_group, message.asSendable())  
+
 @bcc.receiver("MemberJoinEvent")
 async def group_member_join(app: bGraia.GraiaMiraiApplication, member: bGraia.Member, group: bGraia.Group):
     if group.id in qqgroup.vip_group:
