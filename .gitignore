@@ -7,3 +7,5 @@
 *.pyc
 *.txt
 *getData.py
+
+/node_modules
