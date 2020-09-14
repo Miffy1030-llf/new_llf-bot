@@ -194,5 +194,13 @@ class mongodb(object):
         except Exception as e:
             return -1
 
+    @logger.catch
+    def get_weibo_ids(self,uid):
+        try:
+            weibo_ids = list(self.db["weibo"].find({"uid":uid},{"items":1}))
+            return weibo_ids
+        except Exception as e:
+            logger.error(e)
+            return -1
 if __name__ == '__main__':
     mongodb().check_birth_status("8880")

@@ -5,7 +5,6 @@ const axios = require("axios");
 let roomid = 67342026;
 groups = [1084176330]
 var chatroom;
-var bot;
 var session = ""
 
 function initNIM() {
@@ -228,22 +227,34 @@ function filterLLFMessage(msgs) {
                     "type": "Plain",
                     "text": message
                 }]
-            } else if (live_cover) {
-                let live_cover = custom.liveCover
+            }
+
+            let live_cover = custom.liveCover
+            logger.info("[INFO]live cover")
+            logger.info(live_cover)
+            if (live_cover) {
+                logger.info("[INFO]get live")
                 live_title = custom.liveTitle
                 live_id = custom.liveId
 
-                message = "刘力菲开直播了\n直播标题: " + live_title + "\n开始时间: " + time + "\n封面: https://source.48.cn/" + live_cover + "\n网页地址：https://h5.48.cn/2019appshare/memberLiveShare/index.html?id=" + live_id
+                message = "@all\n刘力菲开直播了\n直播标题: " + live_title + "\n开始时间: " + time + "\n网页地址：https://h5.48.cn/2019appshare/memberLiveShare/index.html?id=" + live_id + "\n封面:\n"
                 send_message = [{
                     "type": "AtAll"
                 }, {
                     "type": "Plain",
                     "text": message
+                }, {
+                    "type": "Image",
+                    "url": "https://source.48.cn/" + live_cover
                 }]
+
             }
 
 
+
+
             if (msg.type === "image") {
+                logger.info("[INFO]get image")
                 message = "【刘力菲房间】\n【图片】[" + time + "]-GNZ48-刘力菲: "
                 send_message = [{
                     "type": "Plain",
@@ -253,6 +264,7 @@ function filterLLFMessage(msgs) {
                     "url": msg.file.url
                 }]
             } else if (msg.type === "audio") {
+                logger.info("[INFO]get audio")
                 message = "【刘力菲房间】\n【语音】[" + time + "]-GNZ48-刘力菲: "
                 send_message = [{
                     "type": "Plain",
@@ -262,6 +274,7 @@ function filterLLFMessage(msgs) {
                     "url": msg.file.url
                 }]
             } else if (msg.type === "video") {
+                logger.info("[INFO]get video")
                 message = "【刘力菲房间】\n【视频】[" + time + "]-GNZ48-刘力菲: " + msg.file.url
                 send_message = [{
                     "type": "Plain",
@@ -289,17 +302,23 @@ function filterLLFMessage(msgs) {
                             }
                             return axios.post(url + "/sendGroupMessage", data).then(res => {
                                 if (res.status == 200) {
-                                    console.log(res.data)
+                                    logger.info(res.data)
+                                } else {
+                                    logger.info("[error]" + res.status + "\t" + res.data.msg)
                                 }
                             }).catch(err => {
                                 logger.info(err)
                                 logger.info("qq send error")
                             })
+                        } else {
+                            logger.info("[error]" + res.status + "\t" + res.data.msg)
                         }
                     }).catch(err => {
                         logger.info(err)
                         logger.info("qq verify error")
                     })
+                } else {
+                    logger.info("[error]" + res.status + "\t" + res.data.msg)
                 }
             }).catch(err => {
                 logger.info(err)

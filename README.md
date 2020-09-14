@@ -64,8 +64,11 @@ edit your mongdb infomation
 
 You can customize your auto-reply bot in auto_bot.py which use Graia as framework. To get more infomation about this framework, you can refer to [their github repository](https://github.com/GraiaProject/Application) and [their doc](https://graiaproject.github.io/Application/)
 
+# 3. pocket48 room message
+Because of the limitations of pocket 48, I chose Netease Yunxin(netease im)'s nodejs sdk to get the messages. To get more information about NIM, please refer to [SDK](https://dev.yunxin.163.com/docs/product/IM即时通讯/SDK开发集成/Web开发集成/NodeJS).To send message to QQ, call mirai http api directly.
+
 # Todo list
-- [ ] get room messgae of pocket48 
+- [x] get room messgae of pocket48 
 - [ ] get weibo of Miffy
 - [ ] maybe customize flag for pk
 
