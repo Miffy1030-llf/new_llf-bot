@@ -78,19 +78,20 @@ class TaobaMonitor(object):
                                             msg+="\npick🔗：https://www.taoba.club/index/#/pages/idols/detail?id=8937"
                                             self.bot.send_group_message(qqgroup.tb_groups, msg)
                                         else:
-                                            msg = "感谢{}, Ta刚刚在{}中集资\n".format(user_name,detail.title)
-                                            # msg += "*" * 20
-
+                                            url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
+                                            msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!\n".format(
+                                                user_name, detail.title, round(ul[i].amount, 1))
+                                            msg1 += "*" * 20
+                                            msg1 += "\n"
                                             head_num, money = total[0], total[1]
+                                            msg1 += "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n链接{}\n截止{}".format(money,    head_num, round(money / head_num, 1), url, util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
 
-                                            msg += "当前集资参与人数:{}\n".format(head_num)
+                                            # msg += "当前集资参与人数:{}\n".format(head_num)
                                             self.db.update_raise(_raise, money, head_num)
                                             if _raise == "8876":
                                                 self.bot.send_group_message([920604316], msg)
-                                            if _raise == "8880":
-                                                self.bot.send_group_message([1084176330], msg)
-                                            # else:
-                                            #     self.bot.send_group_message(qqgroup.tb_groups, msg)
+                                            else:
+                                                self.bot.send_group_message(qqgroup.tb_groups, msg)
                                 # if total != -1:
                                 #     url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
                                 #     msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
@@ -171,7 +172,7 @@ class TaobaMonitor(object):
                         except Exception as e:
                             print(e)
             # self.updatePK()
-            time.sleep(10)
+            time.sleep(2)
 
     def get_pk_config(self):
         return self.db.get_pk()
