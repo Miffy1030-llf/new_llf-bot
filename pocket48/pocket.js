@@ -108,7 +108,7 @@ function createChatroom() {
 
 function onChatroomConnect(chatroomInfo) {
     logger.info('进入聊天室', chatroomInfo);
-    getHistoryMsgs()
+    // getHistoryMsgs()
 }
 
 function onChatroomWillReconnect(obj) {
@@ -167,7 +167,7 @@ function getHistoryMsgsDone(error, obj) {
         let text = custom.text
         let role = custom.user.roleId
         let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
-       
+
         // if (text) {
         //     console.log(time + "\n" + custom.messageType + "    " + text)
         //     var url = "http://122.51.213.140:8080";
@@ -241,8 +241,11 @@ function filterLLFMessage(msgs) {
     for (var index in msgs) {
         var msg = msgs[index];
         custom = JSON.parse(msg.custom)
-        let role = custom.user.roleId
-        
+        var role = 0
+        if (custom.user.roleId) {
+            role = custom.user.roleId
+        }
+        var live = 0
         if (role === 3) {
             if (msg.from === "20190415141138_vs435su4fi1dw72") {
                 logger.info('收到小飞消息', msg);
@@ -270,8 +273,8 @@ function filterLLFMessage(msgs) {
                     logger.info("[INFO]get live")
                     live_title = custom.liveTitle
                     live_id = custom.liveId
-
-                    message = "@all\n刘力菲开直播了\n直播标题: " + live_title + "\n开始时间: " + time + "\n网页地址：https://h5.48.cn/2019appshare/memberLiveShare/index.html?id=" + live_id + "\n封面:\n"
+                    live = 1
+                    message = "刘力菲开直播了\n直播标题: " + live_title + "\n开始时间: " + time + "\n网页地址：https://h5.48.cn/2019appshare/memberLiveShare/index.html?id=" + live_id + "\n封面:\n"
                     send_message = [{
                         "type": "AtAll"
                     }, {
@@ -312,21 +315,21 @@ function filterLLFMessage(msgs) {
                         "text": message
                     }]
                 }
-            } else { 
+            } else {
                 let text = custom.text
                 let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
                 if (text) {
                     if (custom.messageType == "TEXT") {
                         let nickname = custom.user.nickName
-                        message = "【刘力菲房间】\n" + nickname +":" + text + "\n时间:" + time
-                    } 
+                        message = "【刘力菲房间】\n" + nickname + ":" + text + "\n时间:" + time
+                    }
                     send_message = [{
                         "type": "Plain",
                         "text": message
                     }]
                 }
             }
-            
+
             logger.info(message)
             var url = "http://122.51.213.140:8080";
             let data = {
@@ -341,41 +344,62 @@ function filterLLFMessage(msgs) {
                     }
                     return axios.post(url + "/verify", data).then(res => {
                         if (res.status == 200 && res.data.msg == "success") {
-                            data1 = {
-                                "sessionKey": session,
-                                "target": 443177702,
-                                "messageChain": send_message
+                            if (live === 1) {
+                                data1 = {
+                                    "sessionKey": session,
+                                    "target": 443177702,
+                                    "messageChain": send_message
+                                }
+                                data2 = {
+                                    "sessionKey": session,
+                                    "target": 244898692,
+                                    "messageChain": send_message
+                                }
+                                return axios.all([
+                                    axios.post(url + "/sendGroupMessage", data1).then(res => {
+                                        if (res.status == 200) {
+                                            logger.info(res.data)
+                                        } else {
+                                            logger.info("[error]" + res.status + "\t" + res.data.msg)
+                                        }
+                                    }).catch(err => {
+                                        logger.info(err)
+                                        logger.info("qq send 443177702 error")
+                                    })
+                                ], [
+                                    axios.post(url + "/sendGroupMessage", data2).then(res => {
+                                        if (res.status == 200) {
+                                            logger.info(res.data)
+                                        } else {
+                                            logger.info("[error]" + res.status + "\t" + res.data.msg)
+                                        }
+                                    }).catch(err => {
+                                        logger.info(err)
+                                        logger.info("qq send 244898692 error")
+                                    })
+                                ])
+                            } else {
+                                data2 = {
+                                    "sessionKey": session,
+                                    "target": 244898692,
+                                    "messageChain": send_message
+                                }
+                                return axios.all([
+                                    axios.post(url + "/sendGroupMessage", data2).then(res => {
+                                        if (res.status == 200) {
+                                            logger.info(res.data)
+                                        } else {
+                                            logger.info("[error]" + res.status + "\t" + res.data.msg)
+                                        }
+                                    }).catch(err => {
+                                        logger.info(err)
+                                        logger.info("qq send 244898692 error")
+                                    })
+                                ])
                             }
-                            data2 = {
-                                "sessionKey": session,
-                                "target": 244898692,
-                                "messageChain": send_message
-                            }
-                            return axios.all([
-                                axios.post(url + "/sendGroupMessage", data1).then(res => {
-                                    if (res.status == 200) {
-                                        logger.info(res.data)
-                                    } else {
-                                        logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                    }
-                                }).catch(err => {
-                                    logger.info(err)
-                                    logger.info("qq send 443177702 error")
-                                })
-                            ], [
-                                axios.post(url + "/sendGroupMessage", data2).then(res => {
-                                    if (res.status == 200) {
-                                        logger.info(res.data)
-                                    } else {
-                                        logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                    }
-                                }).catch(err => {
-                                    logger.info(err)
-                                    logger.info("qq send 244898692 error")
-                                })
-                            ])
-                            
-                           
+
+
+
                         } else {
                             logger.info("[error]" + res.status + "\t" + res.data.msg)
                         }
@@ -390,7 +414,7 @@ function filterLLFMessage(msgs) {
                 logger.info(err)
                 logger.info("qq auth error")
             })
-        } 
+        }
 
     }
 }
@@ -449,4 +473,3 @@ function send_msg_to_group(msg) {
 
 
 initNIM()
-'{"config":{"build":"200701","phoneName":"unknow","version":"6.0.16","mobileOperators":"中国移动","ip":"10.48.106.122","phoneSystemVersion":"13.5.1"},"roomId":"67342026","module":"session","sessionRole":3,"sourceId":"67342026","text":"前辈","bubbleId":"283923487550767105","keyWordStatus":false,"messageType":"TEXT","fromApp":"201811","user":{"roleId":3,"vip":false,"nickName":"GNZ48-马昕玥","teamLogo":"\\/mediasource\\/teamLogo\\/fulllogo\\/snh48_team_yubeisheng.png","userId":6827278358,"avatar":"\\/20200809\\/1596905751227f8DMHmj1PI.jpg"}}'
