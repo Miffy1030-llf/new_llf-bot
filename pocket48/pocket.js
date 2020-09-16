@@ -181,16 +181,45 @@ function getHistoryMsgsDone(error, obj) {
                     }
                     return axios.post(url + "/verify", data).then(res => {
                         if (res.status == 200 && res.data.msg == "success") {
-                            data = {
+                            data1 = {
                                 "sessionKey": session,
                                 "target": 877177747,
-                                "messageChain": msg
+                                "messageChain": [{
+                                    "type": "Plain",
+                                    "text": "message1"
+                                }]
                             }
-                            return axios.post(url + "/sendGroupMessage", data).then(res => {
-                                if (res.status == 200) {
-                                    console.log(res.data)
-                                }
-                            })
+                            data2 = {
+                                "sessionKey": session,
+                                "target": 877177747,
+                                "messageChain": [{
+                                    "type": "Plain",
+                                    "text": "message2"
+                                }]
+                            }
+                            return axios.all([
+                                axios.post(url + "/sendGroupMessage", data1).then(res => {
+                                    if (res.status == 200) {
+                                        logger.info(res.data)
+                                    } else {
+                                        logger.info("[error]" + res.status + "\t" + res.data.msg)
+                                    }
+                                }).catch(err => {
+                                    logger.info(err)
+                                    logger.info("qq send error")
+                                })
+                            ], [
+                                axios.post(url + "/sendGroupMessage", data2).then(res => {
+                                    if (res.status == 200) {
+                                        logger.info(res.data)
+                                    } else {
+                                        logger.info("[error]" + res.status + "\t" + res.data.msg)
+                                    }
+                                }).catch(err => {
+                                    logger.info(err)
+                                    logger.info("qq send error")
+                                })
+                            ])
                         }
                     }).catch(err => {
                         logger.error(err)
@@ -295,21 +324,41 @@ function filterLLFMessage(msgs) {
                     }
                     return axios.post(url + "/verify", data).then(res => {
                         if (res.status == 200 && res.data.msg == "success") {
-                            data = {
+                            data1 = {
                                 "sessionKey": session,
                                 "target": 443177702,
                                 "messageChain": send_message
                             }
-                            return axios.post(url + "/sendGroupMessage", data).then(res => {
-                                if (res.status == 200) {
-                                    logger.info(res.data)
-                                } else {
-                                    logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                }
-                            }).catch(err => {
-                                logger.info(err)
-                                logger.info("qq send error")
-                            })
+                            data2 = {
+                                "sessionKey": session,
+                                "target": 244898692,
+                                "messageChain": send_message
+                            }
+                            return axios.all([
+                                axios.post(url + "/sendGroupMessage", data1).then(res => {
+                                    if (res.status == 200) {
+                                        logger.info(res.data)
+                                    } else {
+                                        logger.info("[error]" + res.status + "\t" + res.data.msg)
+                                    }
+                                }).catch(err => {
+                                    logger.info(err)
+                                    logger.info("qq send 443177702 error")
+                                })
+                            ], [
+                                axios.post(url + "/sendGroupMessage", data2).then(res => {
+                                    if (res.status == 200) {
+                                        logger.info(res.data)
+                                    } else {
+                                        logger.info("[error]" + res.status + "\t" + res.data.msg)
+                                    }
+                                }).catch(err => {
+                                    logger.info(err)
+                                    logger.info("qq send 244898692 error")
+                                })
+                            ])
+                            
+                           
                         } else {
                             logger.info("[error]" + res.status + "\t" + res.data.msg)
                         }
