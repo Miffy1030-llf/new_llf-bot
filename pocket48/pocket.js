@@ -108,7 +108,7 @@ function createChatroom() {
 
 function onChatroomConnect(chatroomInfo) {
     logger.info('进入聊天室', chatroomInfo);
-    // getHistoryMsgs()
+    getHistoryMsgs()
 }
 
 function onChatroomWillReconnect(obj) {
@@ -150,7 +150,7 @@ function onChatroomMsgs(msgs) {
 
 function getHistoryMsgs() {
     chatroom.getHistoryMsgs({
-        timetag: 1596117639000,
+        timetag: 1600184403000,
         limit: 100,
         reverse: true,
         msgTypes: ['text'],
@@ -165,71 +165,73 @@ function getHistoryMsgsDone(error, obj) {
         var msg = obj.msgs[index]
         custom = JSON.parse(msg.custom)
         let text = custom.text
+        let role = custom.user.roleId
         let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
-        if (text) {
-            console.log(time + "\n" + custom.messageType + "    " + text)
-            var url = "http://122.51.213.140:8080";
-            let data = {
-                "authKey": "llf19951030"
-            }
-            return axios.post(url + "/auth", data).then(res => {
-                if (res.status == 200) {
-                    session = res.data.session
-                    data = {
-                        "sessionKey": session,
-                        "qq": 3140852636
-                    }
-                    return axios.post(url + "/verify", data).then(res => {
-                        if (res.status == 200 && res.data.msg == "success") {
-                            data1 = {
-                                "sessionKey": session,
-                                "target": 877177747,
-                                "messageChain": [{
-                                    "type": "Plain",
-                                    "text": "message1"
-                                }]
-                            }
-                            data2 = {
-                                "sessionKey": session,
-                                "target": 877177747,
-                                "messageChain": [{
-                                    "type": "Plain",
-                                    "text": "message2"
-                                }]
-                            }
-                            return axios.all([
-                                axios.post(url + "/sendGroupMessage", data1).then(res => {
-                                    if (res.status == 200) {
-                                        logger.info(res.data)
-                                    } else {
-                                        logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                    }
-                                }).catch(err => {
-                                    logger.info(err)
-                                    logger.info("qq send error")
-                                })
-                            ], [
-                                axios.post(url + "/sendGroupMessage", data2).then(res => {
-                                    if (res.status == 200) {
-                                        logger.info(res.data)
-                                    } else {
-                                        logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                    }
-                                }).catch(err => {
-                                    logger.info(err)
-                                    logger.info("qq send error")
-                                })
-                            ])
-                        }
-                    }).catch(err => {
-                        logger.error(err)
-                        logger.info("qq verify error")
-                    })
-                }
-            }).catch(err => {
-                logger.info("qq auth error")
-            })
-        }
+       
+        // if (text) {
+        //     console.log(time + "\n" + custom.messageType + "    " + text)
+        //     var url = "http://122.51.213.140:8080";
+        //     let data = {
+        //         "authKey": "llf19951030"
+        //     }
+        //     return axios.post(url + "/auth", data).then(res => {
+        //         if (res.status == 200) {
+        //             session = res.data.session
+        //             data = {
+        //                 "sessionKey": session,
+        //                 "qq": 3140852636
+        //             }
+        //             return axios.post(url + "/verify", data).then(res => {
+        //                 if (res.status == 200 && res.data.msg == "success") {
+        //                     data1 = {
+        //                         "sessionKey": session,
+        //                         "target": 877177747,
+        //                         "messageChain": [{
+        //                             "type": "Plain",
+        //                             "text": "message1"
+        //                         }]
+        //                     }
+        //                     data2 = {
+        //                         "sessionKey": session,
+        //                         "target": 877177747,
+        //                         "messageChain": [{
+        //                             "type": "Plain",
+        //                             "text": "message2"
+        //                         }]
+        //                     }
+        //                     return axios.all([
+        //                         axios.post(url + "/sendGroupMessage", data1).then(res => {
+        //                             if (res.status == 200) {
+        //                                 logger.info(res.data)
+        //                             } else {
+        //                                 logger.info("[error]" + res.status + "\t" + res.data.msg)
+        //                             }
+        //                         }).catch(err => {
+        //                             logger.info(err)
+        //                             logger.info("qq send error")
+        //                         })
+        //                     ], [
+        //                         axios.post(url + "/sendGroupMessage", data2).then(res => {
+        //                             if (res.status == 200) {
+        //                                 logger.info(res.data)
+        //                             } else {
+        //                                 logger.info("[error]" + res.status + "\t" + res.data.msg)
+        //                             }
+        //                         }).catch(err => {
+        //                             logger.info(err)
+        //                             logger.info("qq send error")
+        //                         })
+        //                     ])
+        //                 }
+        //             }).catch(err => {
+        //                 logger.error(err)
+        //                 logger.info("qq verify error")
+        //             })
+        //         }
+        //     }).catch(err => {
+        //         logger.info("qq auth error")
+        //     })
+        // }
     }
 
     console.log(msg.time) // filterLLFMessage(obj.msgs)
@@ -238,78 +240,93 @@ function getHistoryMsgsDone(error, obj) {
 function filterLLFMessage(msgs) {
     for (var index in msgs) {
         var msg = msgs[index];
-        if (msg.from === "20190415141138_vs435su4fi1dw72") {
-            logger.info('收到小飞消息', msg);
-            custom = JSON.parse(msg.custom)
-            let text = custom.text
-            let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
-            if (text) {
-                if (custom.messageType == "TEXT") {
-                    message = "【刘力菲房间】\nGNZ48-刘力菲:" + text + "\n时间:" + time
-                } else if (custom.messageType == "REPLY") {
-                    replyName = custom.replyName
-                    replyText = custom.replyText
-                    // logger.info("reply" + replyName + ":" + replyText + "\n" + text)
-                    message = "【刘力菲房间】\n【翻牌】" + "[" + time + "]-GNZ48-刘力菲: " + text + "\n【被翻牌】" + replyName + ": " + replyText
+        custom = JSON.parse(msg.custom)
+        let role = custom.user.roleId
+        
+        if (role === 3) {
+            if (msg.from === "20190415141138_vs435su4fi1dw72") {
+                logger.info('收到小飞消息', msg);
+                let text = custom.text
+                let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
+                if (text) {
+                    if (custom.messageType == "TEXT") {
+                        message = "【刘力菲房间】\nGNZ48-刘力菲:" + text + "\n时间:" + time
+                    } else if (custom.messageType == "REPLY") {
+                        replyName = custom.replyName
+                        replyText = custom.replyText
+                        // logger.info("reply" + replyName + ":" + replyText + "\n" + text)
+                        message = "【刘力菲房间】\n【翻牌】" + "[" + time + "]-GNZ48-刘力菲: " + text + "\n【被翻牌】" + replyName + ": " + replyText
+                    }
+                    send_message = [{
+                        "type": "Plain",
+                        "text": message
+                    }]
                 }
-                send_message = [{
-                    "type": "Plain",
-                    "text": message
-                }]
+
+                let live_cover = custom.liveCover
+                logger.info("[INFO]live cover")
+                logger.info(live_cover)
+                if (live_cover) {
+                    logger.info("[INFO]get live")
+                    live_title = custom.liveTitle
+                    live_id = custom.liveId
+
+                    message = "@all\n刘力菲开直播了\n直播标题: " + live_title + "\n开始时间: " + time + "\n网页地址：https://h5.48.cn/2019appshare/memberLiveShare/index.html?id=" + live_id + "\n封面:\n"
+                    send_message = [{
+                        "type": "AtAll"
+                    }, {
+                        "type": "Plain",
+                        "text": message
+                    }, {
+                        "type": "Image",
+                        "url": "https://source.48.cn/" + live_cover
+                    }]
+
+                }
+
+                if (msg.type === "image") {
+                    logger.info("[INFO]get image")
+                    message = "【刘力菲房间】\n【图片】[" + time + "]-GNZ48-刘力菲: "
+                    send_message = [{
+                        "type": "Plain",
+                        "text": message
+                    }, {
+                        "type": "Image",
+                        "url": msg.file.url
+                    }]
+                } else if (msg.type === "audio") {
+                    logger.info("[INFO]get audio")
+                    message = "【刘力菲房间】\n【语音】[" + time + "]-GNZ48-刘力菲: "
+                    send_message = [{
+                        "type": "Plain",
+                        "text": message
+                    }, {
+                        "type": "Voice",
+                        "url": msg.file.url
+                    }]
+                } else if (msg.type === "video") {
+                    logger.info("[INFO]get video")
+                    message = "【刘力菲房间】\n【视频】[" + time + "]-GNZ48-刘力菲: " + msg.file.url
+                    send_message = [{
+                        "type": "Plain",
+                        "text": message
+                    }]
+                }
+            } else { 
+                let text = custom.text
+                let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
+                if (text) {
+                    if (custom.messageType == "TEXT") {
+                        let nickname = custom.user.nickName
+                        message = "【刘力菲房间】\n" + nickname +":" + text + "\n时间:" + time
+                    } 
+                    send_message = [{
+                        "type": "Plain",
+                        "text": message
+                    }]
+                }
             }
-
-            let live_cover = custom.liveCover
-            logger.info("[INFO]live cover")
-            logger.info(live_cover)
-            if (live_cover) {
-                logger.info("[INFO]get live")
-                live_title = custom.liveTitle
-                live_id = custom.liveId
-
-                message = "@all\n刘力菲开直播了\n直播标题: " + live_title + "\n开始时间: " + time + "\n网页地址：https://h5.48.cn/2019appshare/memberLiveShare/index.html?id=" + live_id + "\n封面:\n"
-                send_message = [{
-                    "type": "AtAll"
-                }, {
-                    "type": "Plain",
-                    "text": message
-                }, {
-                    "type": "Image",
-                    "url": "https://source.48.cn/" + live_cover
-                }]
-
-            }
-
-
-
-
-            if (msg.type === "image") {
-                logger.info("[INFO]get image")
-                message = "【刘力菲房间】\n【图片】[" + time + "]-GNZ48-刘力菲: "
-                send_message = [{
-                    "type": "Plain",
-                    "text": message
-                }, {
-                    "type": "Image",
-                    "url": msg.file.url
-                }]
-            } else if (msg.type === "audio") {
-                logger.info("[INFO]get audio")
-                message = "【刘力菲房间】\n【语音】[" + time + "]-GNZ48-刘力菲: "
-                send_message = [{
-                    "type": "Plain",
-                    "text": message
-                }, {
-                    "type": "Voice",
-                    "url": msg.file.url
-                }]
-            } else if (msg.type === "video") {
-                logger.info("[INFO]get video")
-                message = "【刘力菲房间】\n【视频】[" + time + "]-GNZ48-刘力菲: " + msg.file.url
-                send_message = [{
-                    "type": "Plain",
-                    "text": message
-                }]
-            }
+            
             logger.info(message)
             var url = "http://122.51.213.140:8080";
             let data = {
@@ -373,7 +390,7 @@ function filterLLFMessage(msgs) {
                 logger.info(err)
                 logger.info("qq auth error")
             })
-        }
+        } 
 
     }
 }
@@ -432,3 +449,4 @@ function send_msg_to_group(msg) {
 
 
 initNIM()
+'{"config":{"build":"200701","phoneName":"unknow","version":"6.0.16","mobileOperators":"中国移动","ip":"10.48.106.122","phoneSystemVersion":"13.5.1"},"roomId":"67342026","module":"session","sessionRole":3,"sourceId":"67342026","text":"前辈","bubbleId":"283923487550767105","keyWordStatus":false,"messageType":"TEXT","fromApp":"201811","user":{"roleId":3,"vip":false,"nickName":"GNZ48-马昕玥","teamLogo":"\\/mediasource\\/teamLogo\\/fulllogo\\/snh48_team_yubeisheng.png","userId":6827278358,"avatar":"\\/20200809\\/1596905751227f8DMHmj1PI.jpg"}}'
