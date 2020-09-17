@@ -13,11 +13,11 @@ class TaobaMonitor(object):
     def __init__(self):
         self.db = mongo.mongodb()
         self.bot = bGraia.GraiaBot()
-        
+
     def start_monitor(self):
         while True:
             raise_list = self.db.get_raise_list()
-            
+
             if raise_list != -1:
                 for i in range(len(raise_list)):
                     _raise = raise_list[i]
@@ -51,47 +51,66 @@ class TaobaMonitor(object):
                                         if _raise == "8937":
                                             gua_now = 0
                                             hua_now = 0
-                                            
-                                            total_dict = {"gua":0,"hua":0,"other":0}
+
+                                            total_dict = {
+                                                "gua": 0, "hua": 0, "other": 0}
                                             for res in resultList:
                                                 if "瓜" in res[0]:
-                                                    total_dict["gua"] += (int(res[1]) * float(res[2]))
+                                                    total_dict["gua"] += (
+                                                        int(res[1]) * float(res[2]))
                                                     gua_now += int(res[1])
-                                                   
+
                                                 elif "花" in res[0]:
-                                                    total_dict["hua"] += (int(res[1]) * float(res[2]))
+                                                    total_dict["hua"] += (
+                                                        int(res[1]) * float(res[2]))
                                                     hua_now += int(res[1])
-                                                    
-                                            record = self.db.db["config"].find_one({"gh":1})
+
+                                            record = self.db.db["config"].find_one(
+                                                {"gh": 1})
                                             hua = record.get("hua")
                                             gua = record.get("gua")
                                             if hua != hua_now:
-                                                msg = "感谢{}支持了菲菲是花阵营，花妈阵营加{}积分".format(user_name, round(ul[i].amount, 1))
-                                                self.db.db["config"].update({"gh":1},{"$set":{"hua":hua_now}})
+                                                msg = "感谢{}支持了菲菲是花阵营，花妈阵营加{}积分".format(
+                                                    user_name, round(ul[i].amount, 1))
+                                                self.db.db["config"].update(
+                                                    {"gh": 1}, {"$set": {"hua": hua_now}})
                                             elif gua != gua_now:
-                                                msg = "感谢{}支持了菲菲是瓜阵营，瓜妈阵营加{}积分".format(user_name, round(ul[i].amount, 1))
-                                                self.db.db["config"].update({"gh":1},{"$set":{"gua":gua_now}})
+                                                msg = "感谢{}支持了菲菲是瓜阵营，瓜妈阵营加{}积分".format(
+                                                    user_name, round(ul[i].amount, 1))
+                                                self.db.db["config"].update(
+                                                    {"gh": 1}, {"$set": {"gua": gua_now}})
                                             if total_dict.get("gua") >= total_dict.get("hua"):
-                                                msg += "\n当前排名：\n瓜妈阵营{}积分，\n花妈阵营{}积分".format(round(total_dict.get("gua"),1), round(total_dict.get("hua"),1))
+                                                msg += "\n当前排名：\n瓜妈阵营{}积分，\n花妈阵营{}积分".format(
+                                                    round(total_dict.get("gua"), 1), round(total_dict.get("hua"), 1))
                                             else:
-                                                msg += "\n当前排名：\n花妈阵营{}积分，\n瓜妈阵营{}积分".format(round(total_dict.get("hua"),1), round(total_dict.get("gua"),1))
-                                            msg+="\npick🔗：https://www.taoba.club/index/#/pages/idols/detail?id=8937"
-                                            self.bot.send_group_message(qqgroup.tb_groups, msg)
+                                                msg += "\n当前排名：\n花妈阵营{}积分，\n瓜妈阵营{}积分".format(
+                                                    round(total_dict.get("hua"), 1), round(total_dict.get("gua"), 1))
+                                            msg += "\npick🔗：https://www.taoba.club/index/#/pages/idols/detail?id=8937"
+                                            self.bot.send_group_message(
+                                                qqgroup.tb_groups, msg)
                                         else:
                                             url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
-                                            msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!\n".format(
-                                                user_name, detail.title, round(ul[i].amount, 1))
+                                            msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
+                                                user_name, detail.title, round(ul[i].amount, 1), round(user_data[1], 1), user_data[0])
                                             msg1 += "*" * 20
                                             msg1 += "\n"
                                             head_num, money = total[0], total[1]
-                                            msg1 += "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n链接{}\n截止{}".format(money,    head_num, round(money / head_num, 1), url, util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
+                                            msg1 += "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n链接{}\n截止{}".format(money,    head_num, round(
+                                                money / head_num, 1), url, util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
 
                                             # msg += "当前集资参与人数:{}\n".format(head_num)
-                                            self.db.update_raise(_raise, money, head_num)
+                                            self.db.update_raise(
+                                                _raise, money, head_num)
                                             if _raise == "8876":
-                                                self.bot.send_group_message([920604316], msg)
+                                                self.bot.send_group_message(
+                                                    [920604316], msg1)
+                                            if _raise == "9334":
+                                                pass
+                                                self.bot.send_group_message(
+                                                    [913371260], msg1)
                                             else:
-                                                self.bot.send_group_message(qqgroup.tb_groups, msg)
+                                                self.bot.send_group_message(
+                                                    qqgroup.tb_groups, msg1)
                                 # if total != -1:
                                 #     url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + _raise
                                 #     msg1 = "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
@@ -105,7 +124,7 @@ class TaobaMonitor(object):
                                 #     self.db.update_raise(_raise, money, head_num)
                                 #     self.bot.send_group_message(
                                 #         qqgroup.tb_groups, msg1 + msg2 + msg3)
-                                
+
                             #         data_relay = {
                             #             103: 0, 51.5: 0, 10.3: 0, 1030: 0}
                             #         data_head = {
@@ -294,6 +313,7 @@ class TaobaMonitor(object):
                     {"name": "谢蕾蕾"}, {"$set": {"p4": xll}})
         except Exception as e:
             return
+
 
 if __name__ == '__main__':
     TaobaMonitor().start_monitor()
