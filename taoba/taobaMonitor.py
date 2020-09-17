@@ -105,7 +105,6 @@ class TaobaMonitor(object):
                                                 self.bot.send_group_message(
                                                     [920604316], msg1)
                                             if _raise == "9334":
-                                                pass
                                                 self.bot.send_group_message(
                                                     [913371260], msg1)
                                             else:
