@@ -51,6 +51,7 @@ async def group_message_handler(app: bGraia.GraiaMiraiApplication, message: bGra
 
 @bcc.receiver("MemberJoinEvent")
 async def group_member_join(app: bGraia.GraiaMiraiApplication, member: bGraia.Member, group: bGraia.Group):
+    logger.info("memberJoin group:{}, member:{}".format(group.id, member.id))
     if group.id in qqgroup.vip_group:
         msg = bGraia.MessageChain.create([bGraia.Plain("恭喜"), bGraia.At(member.id), bGraia.Plain("闯关成功加入到ifei保护协会\n本协会秉持守护每位ifei的宗旨会超甜营业的")]).asSendable()
         await app.sendGroupMessage(group, msg)

@@ -44,29 +44,29 @@ class weiboMonitor(object):
                 if i['card_type'] == 9:
                     task.itemIds.append(i['mblog']['id'])
                     whole_weibo_text = self.get_whole_weibo_content(i['mblog']['id'])
-                    my_logger.debug('微博内容: {}'.format(
+                    logger.debug('微博内容: {}'.format(
                         self.handle_weibo_text(whole_weibo_text)))
                     if 'pics' in i['mblog'].keys():
-                        my_logger.debug('有图片')
+                        logger.debug('有图片')
                         for j in i['mblog']['pics']:
                             if 'large' in j.keys():
-                                my_logger.debug('使用大图')
-                                my_logger.debug(j['large']['url'])
+                                logger.debug('使用大图')
+                                logger.debug(j['large']['url'])
                             else:
-                                my_logger.debug(j['url'])
+                                logger.debug(j['url'])
                     # 如果有视频
                     if 'page_info' in i['mblog'].keys():
                         page_info = i['mblog']['page_info']
                         if page_info['type'] == 'video':
-                            my_logger.debug('有视频')
-                            my_logger.debug('视频截图: {}'.format(page_info['page_pic']['url']))
+                            logger.debug('有视频')
+                            logger.debug('视频截图: {}'.format(page_info['page_pic']['url']))
                     # 如果是转发
                     if 'retweeted_status' in i['mblog'].keys():
                         retweeted_status = i['mblog']['retweeted_status']
                         retweeted_user = retweeted_status['user']
-                        my_logger.debug(
+                        logger.debug(
                             '被转发人, id: {}, 微博名: {}'.format(retweeted_user['id'], retweeted_user['screen_name']))
-                        my_logger.debug('转发微博内容: {}'.format(
+                        logger.debug('转发微博内容: {}'.format(
                             self.handle_weibo_text(self.get_whole_weibo_content(retweeted_status['id']))))
             self.echoMsg('Info', 'Got weibos')
             self.echoMsg('Info', 'Has %d weibo id(s)' % len(task.itemIds))
