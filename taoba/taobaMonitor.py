@@ -28,10 +28,7 @@ class TaobaMonitor(object):
                     if ul:
                         try:
                             for i in range(len(ul)):
-                                fake_hash = int(
-                                    ul[i].user_id) + int(ul[i].time)
-                                exist = self.db.db["items"].find_one(
-                                    {"fake_hash": fake_hash})
+                                exist = self.db.db["items"].find_one({"pro_id":_raise,"time": int(ul[i].time)})
                                 if not (exist is None):
                                     break
                                 uid = ul[i].user_id

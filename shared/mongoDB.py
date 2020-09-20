@@ -73,8 +73,7 @@ class mongodb(object):
     def insert_item(self, person):
         try:
             item_collection = self.db["items"]
-            fake_hash = int(person.user_id) + int(person.time)
-            item_collection.insert_one({"user_id": person.user_id, "pro_id": person.pro_id, "nickname":person.nickname, "amount": round(float(person.amount),2),"time":person.time,"fake_hash":fake_hash})
+            item_collection.insert_one({"user_id": person.user_id, "pro_id": person.pro_id, "nickname":person.nickname, "amount": round(float(person.amount),2),"time":person.time})
             logger.debug("insert purchase item, {},{}".format(person.nickname, person.amount))
             return True
         except Exception as e:
