@@ -34,7 +34,7 @@ class mongodb(object):
     def get_raise_list(self):
         try:
             config_collection = self.db["config"]
-            raise_list = config_collection.find_one({"isPK":0}, {"monitor": 1})["monitor"]
+            raise_list = list(config_collection.find({"monitor":1}, {"_id": 0}))
             logger.info("get raise list,{}".format(raise_list))
             return raise_list
         except Exception as e:
@@ -201,5 +201,15 @@ class mongodb(object):
         except Exception as e:
             logger.error(e)
             return -1
+        
+    @logger.catch
+    def get_lottery_info(self):
+        try:
+            giftList = list(self.db["lottery"].find({},{"_id":0}))
+            return giftList
+        except Exception as e:
+            logger.error(e)
+            return []
+        
 if __name__ == '__main__':
-    mongodb().check_birth_status("8880")
+    mongodb().get_lottery_info()
