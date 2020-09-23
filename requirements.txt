@@ -62,4 +62,4 @@ urllib3
 websockets 
 Werkzeug 
 wrapt 
-yarl 
+yarl==1.4.2 
