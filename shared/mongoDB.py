@@ -210,6 +210,5 @@ class mongodb(object):
         except Exception as e:
             logger.error(e)
             return []
-        
 if __name__ == '__main__':
     mongodb().get_lottery_info()
