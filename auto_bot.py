@@ -6,6 +6,7 @@ from loguru import logger
 import os
 import taoba.PKItem as pk
 from taoba.Crawler import GetPurchaseList
+import subprocess
 bcc = bGraia.bcc
 db = mongoDB.mongodb()
 logger.add(os.path.join(os.path.dirname(__file__),"logs","autobot.log"),
@@ -14,6 +15,20 @@ logger.add(os.path.join(os.path.dirname(__file__),"logs","autobot.log"),
            rotation="10 MB")
 bot = GraiaBot()
 
+@bcc.receiver("FriendMessage")
+@logger.catch
+async def private_message_handler(app: bGraia.GraiaMiraiApplication,message: bGraia.MessageChain,sender:bGraia.Friend):
+    msg = message.asDisplay()
+    if msg == "重启":
+        try:
+            subprocess.run(["pm2","restart","all"])
+            await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("重启成功")]))
+        except Exception as e:
+            await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
+    if "add " in msg or "delete " in msg:
+        name = msg.split(" ")[1]
+        _id = msg.split(" ")[2]
+        db
 @bcc.receiver("GroupMessage")
 @logger.catch
 async def group_message_handler(app: bGraia.GraiaMiraiApplication, message: bGraia.MessageChain, group: bGraia.Group):
