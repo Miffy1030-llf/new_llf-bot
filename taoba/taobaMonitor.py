@@ -1,5 +1,5 @@
 
-from taoba.Crawler import GetPurchaseList, GetDetail, GetGoodDetail
+from taoba.Crawler import GetPurchaseList, GetDetail, GetGoodDetail, GetRank
 from taoba.Structure import rankingModel
 from taoba.owhatCrawler import getOwhatSales
 from taoba.lottery import Draw as Draw
@@ -96,14 +96,22 @@ class TaobaMonitor(object):
 
                                 self.db.update_raise(_raise, money, head_num)
                 if _raise != "8937":
-                    total = self.db.get_total_count_and_money_this_pro(_raise)
-                    try:
-                        head_num, money = total[0], total[1]
-                    except Exception as e:
-                        head_num, money = 0,0
-                    finally:
-                        if msg != "":
-                            msg += "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n截止{}".format(money, head_num, round(money / head_num, 1), util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
+                    if _raise == "9609":
+                        allRank = GetRank(_raise)[:10]
+                        allRankStr = ''.join(["{}. {}\n".format(i, allRank[i]) for i in range(len(allRank))])
+                        msg += "*" * 20
+                        msg += "\n当前：\n"
+                        msg += allRankStr
+                        
+                    else:
+                        total = self.db.get_total_count_and_money_this_pro(_raise)
+                        try:
+                            head_num, money = total[0], total[1]
+                        except Exception as e:
+                            head_num, money = 0,0
+                        finally:
+                            if msg != "":
+                                msg += "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n截止{}".format(money, head_num, round(money / head_num, 1), util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
                 return msg
             except Exception as e:
                 print(e)

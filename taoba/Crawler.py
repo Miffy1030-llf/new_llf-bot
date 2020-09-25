@@ -122,8 +122,15 @@ def GetGoodDetail(pro_id:str):
         # print("名称{},件数{},单价{}，总额{}".format(good["name"], good["sells"], good["price"],int(good["sells"]) * int(good["price"])))
     return return_list
 
+@logger.catch
+def GetRank(pro_id:str):
+    Data='{{"id":"{0}","requestTime":{1},"pf":"h5","iscoopen":0,"_version_":1}}'.format(pro_id,str(time.time()*1000))
+    Response=SendRequest('https://www.tao-ba.club/idols/join/rank',Data)
+    rank = [item['nick'] for item in Response["list"]]
+    return rank
+
 if __name__ == "__main__":
-    print(GetPurchaseList("8937"))
-    # print(GetDetail("3487"))
-    # GetGoodDetail("4830")
-    GetGoodDetail("8937")
+    # print(GetPurchaseList("8937"))
+    print(GetRank("3487"))
+    # # GetGoodDetail("4830")
+    # GetGoodDetail("8937")
