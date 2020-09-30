@@ -259,6 +259,10 @@ function filterLLFMessage(msgs) {
                         replyText = custom.replyText
                         // logger.info("reply" + replyName + ":" + replyText + "\n" + text)
                         message = "【刘力菲房间】\n【翻牌】" + "[" + time + "]-GNZ48-刘力菲: " + text + "\n【被翻牌】" + replyName + ": " + replyText
+                    } else if (custom.messageType == "FLIPCARD") { 
+                        question = custom.question
+                        answer = custom.answer
+                        message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question 
                     }
                     send_message = [{
                         "type": "Plain",
