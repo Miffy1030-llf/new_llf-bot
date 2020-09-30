@@ -150,7 +150,7 @@ function onChatroomMsgs(msgs) {
 
 function getHistoryMsgs() {
     chatroom.getHistoryMsgs({
-        timetag: 1600184403000,
+        timetag: 1601456458000,
         limit: 100,
         reverse: true,
         msgTypes: ['text'],
@@ -160,6 +160,7 @@ function getHistoryMsgs() {
 
 function getHistoryMsgsDone(error, obj) {
     // logger.info('获取聊天室历史' + (!error ? '成功' : '失败'), error, obj.msgs);
+    // filterLLFMessage(obj.msgs)
     for (var index in obj.msgs) {
 
         var msg = obj.msgs[index]
@@ -259,20 +260,28 @@ function filterLLFMessage(msgs) {
                         replyText = custom.replyText
                         // logger.info("reply" + replyName + ":" + replyText + "\n" + text)
                         message = "【刘力菲房间】\n【翻牌】" + "[" + time + "]-GNZ48-刘力菲: " + text + "\n【被翻牌】" + replyName + ": " + replyText
-                    } else if (custom.messageType == "FLIPCARD") { 
-                        question = custom.question
-                        answer = custom.answer
-                        message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question 
-                    }
+                    } 
                     send_message = [{
                         "type": "Plain",
                         "text": message
                     }]
                 }
-
+                else if (msg.text == "偶像翻牌") { 
+                    question = custom.question
+                    answer = custom.answer
+                    message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question
+                        message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question 
+                    message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question
+                        message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question 
+                    message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question
+                        message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question 
+                    message = "【刘力菲房间】\n【回答】" + "[" + time + "]-GNZ48-刘力菲: " + answer + "\n【问题】" + question
+                    send_message = [{
+                        "type": "Plain",
+                        "text": message
+                    }]
+                }
                 let live_cover = custom.liveCover
-                logger.info("[INFO]live cover")
-                logger.info(live_cover)
                 if (live_cover) {
                     logger.info("[INFO]get live")
                     live_title = custom.liveTitle
@@ -334,7 +343,6 @@ function filterLLFMessage(msgs) {
                 }
             }
 
-            logger.info(message)
             var url = "http://122.51.213.140:8080";
             let data = {
                 "authKey": "llf19951030"
