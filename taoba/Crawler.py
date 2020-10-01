@@ -120,6 +120,7 @@ def GetGoodDetail(pro_id:str):
     for good in goods_list:
         return_list.append((good["name"], good["sells"], good["price"]))
         # print("名称{},件数{},单价{}，总额{}".format(good["name"], good["sells"], good["price"],int(good["sells"]) * int(good["price"])))
+    return_list = sorted(return_list, key=lambda x: x[1]*x[2])[::-1]
     return return_list
 
 @logger.catch
@@ -131,6 +132,6 @@ def GetRank(pro_id:str):
 
 if __name__ == "__main__":
     # print(GetPurchaseList("8937"))
-    print(GetRank("3487"))
+    print(GetGoodDetail("9805"))
     # # GetGoodDetail("4830")
     # GetGoodDetail("8937")

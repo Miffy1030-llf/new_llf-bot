@@ -30,6 +30,10 @@ class TaobaMonitor(object):
                             msg += "*" * 20
                             msg += "\n当前：(每五分钟更新)\n"
                             msg += allRankStr
+                        elif single_raiseId == "9805":
+                            details = GetGoodDetail(single_raiseId)
+                            for detail in details:
+                                msg += "{}:{}\n".format(detail[0], round(detail[1]*detail[2],1))
                         msg += "\n支持🔗:" + url
                         self.bot.send_group_message([qq], msg)
             time.sleep(2)
@@ -55,52 +59,13 @@ class TaobaMonitor(object):
                     total = self.db.get_total_count_and_money_this_pro(_raise)
                     if user_name:
                         if total != -1:
-                            if _raise == "8937":
-                                gua_now = 0
-                                hua_now = 0
+                            msg += "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
+                                user_name, detail.title, round(ul[i].amount, 1), round(user_data[1], 1), user_data[0])
+                            msg += "*" * 20
+                            msg += "\n"
+                            head_num, money = total[0], total[1]
 
-                                total_dict = {
-                                    "gua": 0, "hua": 0, "other": 0}
-                                for res in resultList:
-                                    if "瓜" in res[0]:
-                                        total_dict["gua"] += (
-                                            int(res[1]) * float(res[2]))
-                                        gua_now += int(res[1])
-
-                                    elif "花" in res[0]:
-                                        total_dict["hua"] += (
-                                            int(res[1]) * float(res[2]))
-                                        hua_now += int(res[1])
-
-                                record = self.db.db["config"].find_one(
-                                    {"gh": 1})
-                                hua = record.get("hua")
-                                gua = record.get("gua")
-                                if hua != hua_now:
-                                    msg += "感谢{}支持了菲菲是花阵营，花妈阵营加{}积分".format(
-                                        user_name, round(ul[i].amount, 1))
-                                    self.db.db["config"].update(
-                                        {"gh": 1}, {"$set": {"hua": hua_now}})
-                                elif gua != gua_now:
-                                    msg += "感谢{}支持了菲菲是瓜阵营，瓜妈阵营加{}积分".format(
-                                        user_name, round(ul[i].amount, 1))
-                                    self.db.db["config"].update(
-                                        {"gh": 1}, {"$set": {"gua": gua_now}})
-                                if total_dict.get("gua") >= total_dict.get("hua"):
-                                    msg += "\n当前排名：\n瓜妈阵营{}积分，\n花妈阵营{}积分".format(
-                                        round(total_dict.get("gua"), 1), round(total_dict.get("hua"), 1))
-                                else:
-                                    msg += "\n当前排名：\n花妈阵营{}积分，\n瓜妈阵营{}积分".format(
-                                        round(total_dict.get("hua"), 1), round(total_dict.get("gua"), 1))
-                            else:
-                                
-                                msg += "感谢{}, Ta刚刚在{}中贡献了{}元!Ta一共贡献了{}元,目前排名第{}位\n".format(
-                                    user_name, detail.title, round(ul[i].amount, 1), round(user_data[1], 1), user_data[0])
-                                msg += "*" * 20
-                                msg += "\n"
-                                head_num, money = total[0], total[1]
-
-                                self.db.update_raise(_raise, money, head_num)
+                            self.db.update_raise(_raise, money, head_num)
                         # if _raise != "8937":
                         #     if _raise == "9609":
                         #         allRank = GetRank(_raise)[:10]
