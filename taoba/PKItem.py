@@ -83,7 +83,7 @@ class PK(object):
             msg += " 我们目前为第1名， 领先第二名{}\n".format(dis)
         else:
             dis = round(ranked_group[ourRank - 2][1]["amount"] - ranked_group[ourRank -1][1]["amount"],1)
-            msg += " 我们目前为第1名， 领先第二名{}\n".format(dis)
+            msg += " 我们目前为第{}名， 落后前一名{}\n".format(ourRank,dis)
         return msg
  
         
