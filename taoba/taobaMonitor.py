@@ -9,6 +9,7 @@ import time
 import bot.GraiaBot as bGraia
 import shared.QQGroup as qqgroup
 
+import taoba.PKItem as pk
 
 class TaobaMonitor(object):
     def __init__(self):
@@ -26,6 +27,10 @@ class TaobaMonitor(object):
                         url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + single_raiseId
                         msg += "\n支持🔗:" + url
                         self.bot.send_group_message([qq], msg)
+                        if single_raiseId == "10460":
+                            msg_pk = pk.PK().format_msg()
+                            if msg_pk:
+                                self.bot.send_group_message([qq], msg_pk)
             time.sleep(2)
 
     def monitor_single_raise(self, _raise):

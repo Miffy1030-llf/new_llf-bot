@@ -75,7 +75,7 @@ class PK(object):
         ourRank = 1
         for i in range(len(ranked_group)):
             msg += "【第{}组】总计{}元，组内排名\n".format(ranked_group[i][0], round(ranked_group[i][1].get("amount"),1))
-            if ranked_group[i][1] == 1:
+            if ranked_group[i][0] == 1:
                 ourRank = i + 1
             msg += "".join(["{}:{}元\n".format(p[0], round(p[1] * (p[2] if self.__ratio == 1 else 1),1)) for p in ranked_group_list[i]])
         if ourRank == 1:
