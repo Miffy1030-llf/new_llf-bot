@@ -24,16 +24,6 @@ class TaobaMonitor(object):
                     msg = self.monitor_single_raise(single_raiseId)
                     if msg and msg != "error" and msg != "":
                         url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + single_raiseId
-                        if single_raiseId == "9609":
-                            allRank = GetRank(single_raiseId)[:10]
-                            allRankStr = ''.join(["{}. {}\n".format(i+1, allRank[i]) for i in range(len(allRank))])
-                            msg += "*" * 20
-                            msg += "\n当前：(每五分钟更新)\n"
-                            msg += allRankStr
-                        elif single_raiseId == "9805":
-                            details = GetGoodDetail(single_raiseId)
-                            for detail in details:
-                                msg += "{}:{}\n".format(detail[0], round(detail[1]*detail[2],1))
                         msg += "\n支持🔗:" + url
                         self.bot.send_group_message([qq], msg)
             time.sleep(2)
