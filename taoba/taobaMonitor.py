@@ -27,9 +27,10 @@ class TaobaMonitor(object):
                         url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + single_raiseId
                         msg += "\n支持🔗:" + url
                         self.bot.send_group_message([qq], msg)
-                        msg_pk = pk.PK().format_msg()
-                        if msg_pk:
-                            self.bot.send_group_message([qq], msg_pk)
+                        if self.db.get_pk_info():
+                            msg_pk = pk.PK().format_msg()
+                            if msg_pk:
+                                self.bot.send_group_message([qq], msg_pk)
             time.sleep(2)
 
     def monitor_single_raise(self, _raise):
