@@ -25,6 +25,18 @@ async def private_message_handler(app: bGraia.GraiaMiraiApplication,message: bGr
             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("重启成功")]))
         except Exception as e:
             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
+    elif msg == "关闭房间":
+        try:
+            subprocess.run(["pm2","stop","pocket"])
+            await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("已成功")]))
+        except Exception as e:
+             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
+    elif msg == "开启房间":
+        try:
+            subprocess.run(["pm2","restart","pocket"])
+            await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("已成功")]))
+        except Exception as e:
+             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
     if "add " in msg or "delete " in msg:
         name = msg.split(" ")[1]
         _id = msg.split(" ")[2]

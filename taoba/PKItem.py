@@ -25,6 +25,7 @@ class PK(object):
             self.__groups = pk_info.get("groups")
             self.__ratio = pk_info.get("ratio")
             self.__needTotal = pk_info.get("need_total")
+            self.__mainPID = pk_info.get("mainPID")
             self.pk_list = []
             break
     
@@ -102,7 +103,11 @@ class PK(object):
         return msg
     
     def format_msg(self):
-        
+        for singleRaise in self.mdb.get_raise_list():
+            if singleRaise.get('name') == "刘力菲":
+                raise_list = singleRaise.get("raise")
+        if not self.__mainPID in raise_list:
+            return None
         self.mdb.db["pkConfig"].update_one({"isActivated":1},{"$set": {"total_time": self.__total_time + 1}})
         if self.__total_time % self.__interval != 0:
             return None
@@ -112,7 +117,8 @@ class PK(object):
             if self.__needTotal == 1:
                 msg += ("\n" + "*" * 10 + "\n" + self.__format_total_msg())
         except Exception:
-            msg = "PK可能不存在哦 但小飞的可爱是存在的"   
+            logger.exception("PK message format error")
+            return None
         finally:
             return msg
         
