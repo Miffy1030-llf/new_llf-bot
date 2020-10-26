@@ -21,19 +21,20 @@ async def private_message_handler(app: bGraia.GraiaMiraiApplication,message: bGr
     msg = message.asDisplay()
     if msg == "重启":
         try:
-            subprocess.run(["pm2","restart","all"])
+            os.system("pm2 restart pocket")
+            os.system("pm2 restart taoba")
             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("重启成功")]))
         except Exception as e:
             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
     elif msg == "关闭房间":
         try:
-            subprocess.run(["pm2","stop","pocket"])
+            os.system("pm2 stop pocket")
             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("已成功")]))
         except Exception as e:
-             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
-    elif msg == "开启房间":
+             await app.secdndFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
+    elif msg == "重启房间":
         try:
-            subprocess.run(["pm2","restart","pocket"])
+            os.system("pm2 restart pocket")
             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("已成功")]))
         except Exception as e:
              await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
