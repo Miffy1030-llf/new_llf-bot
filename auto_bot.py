@@ -38,10 +38,20 @@ async def private_message_handler(app: bGraia.GraiaMiraiApplication,message: bGr
             await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("已成功")]))
         except Exception as e:
              await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
-    if "add " in msg or "delete " in msg:
+    if "add " in msg:
         name = msg.split(" ")[1]
         _id = msg.split(" ")[2]
-        db
+        if db.insert_new_raise(name, _id):
+            await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("已成功")]))
+        else:
+            await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
+    elif "delete " in msg:
+        name = msg.split(" ")[1]
+        _id = msg.split(" ")[2]
+        if db.remove_new_raise(name, _id):
+            await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("已成功")]))
+        else:
+            await app.sendFriendMessage(sender,bGraia.MessageChain.create([bGraia.Plain("请重试")]))
 @bcc.receiver("GroupMessage")
 @logger.catch
 async def group_message_handler(app: bGraia.GraiaMiraiApplication, message: bGraia.MessageChain, group: bGraia.Group):

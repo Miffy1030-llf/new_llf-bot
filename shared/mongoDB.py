@@ -68,7 +68,25 @@ class mongodb(object):
         except Exception as e:
             logger.info("[ERROR]insert error")
             return False
+    @logger.catch
+    def insert_new_raise(self,name,pid):
+        try:
+            config_collection = self.db["config"]
+            config_collection.update_one({"name":name}, {"$addToSet": {"raise": pid}})
+            return True
+        except Exception as e:
+            logger.info("[ERROR]insert new raise")
+            return False
         
+    def remove_new_raise(self,name,pid):
+        try:
+            config_collection = self.db["config"]
+            config_collection.update_one({"name":name}, {"$pull": {"raise": pid}})
+            return True
+        except Exception as e:
+            logger.info("[ERROR]remove new raise")
+            return False
+    
     @logger.catch
     def insert_item(self, person):
         try:
