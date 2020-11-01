@@ -1,6 +1,7 @@
 import os
 
 from loguru import logger
+from pydantic.tools import T
 
 import taoba.Crawler as taobaCrawler
 import taoba.owhatCrawler as owhat
@@ -13,22 +14,27 @@ logger.add(os.path.join(os.path.dirname(os.path.dirname(__file__)),"logs","pk.lo
 
 class PK(object):
     @logger.catch
-    def __init__(self):
-        while 1:
-            self.mdb = mdb()
-            pk_info = self.mdb.get_pk_info()
-            if pk_info == -1:
-                continue
-            self.__name = pk_info.get("name")
-            self.__total_time = pk_info.get("total_time")
-            self.__interval = pk_info.get("interval")
-            self.__groups = pk_info.get("groups")
-            self.__ratio = pk_info.get("ratio")
-            self.__needTotal = pk_info.get("need_total")
-            self.__mainPID = pk_info.get("mainPID")
-            self.pk_list = []
-            break
-    
+    def __init__(self,mainPID):
+
+        self.mdb = mdb()
+        pk_info = self.mdb.get_pk_info(mainPID)
+        self.pk_info = pk_info
+        self.pk_list = []
+        
+    @logger.catch
+    def __initValues(self):
+        if not self.pk_info is None and self.pk_info == -1:
+            return False
+        else:
+            self.__name = self.pk_info.get("name")
+            self.__total_time = self.pk_info.get("total_time")
+            self.__interval = self.pk_info.get("interval")
+            self.__groups = self.pk_info.get("groups")
+            self.__ratio = self.pk_info.get("ratio")
+            self.__needTotal = self.pk_info.get("need_total")
+            self.__mainPID = self.pk_info.get("mainPID")
+            return True
+        
     @logger.catch
     def __format_basic_info(self):
         pk_list = []
@@ -103,12 +109,10 @@ class PK(object):
         return msg
     
     def format_msg(self):
-        for singleRaise in self.mdb.get_raise_list():
-            if singleRaise.get('name') == "刘力菲":
-                raise_list = singleRaise.get("raise")
-        if not self.__mainPID in raise_list:
+        if not self.__initValues():
             return None
-        self.mdb.db["pkConfig"].update_one({"isActivated":1},{"$set": {"total_time": self.__total_time + 1}})
+        msg = ""
+        self.mdb.db["pkConfig"].update_one({"isActivated":1,"mainPID":self.__mainPID},{"$set": {"total_time": self.__total_time + 1}})
         if self.__total_time % self.__interval != 0:
             return None
         try:
@@ -135,4 +139,4 @@ class PK(object):
         return round(float(amount),2)
         
 if __name__ == "__main__":
-    print(PK().format_msg())
+    print(PK("10712").format_msg())

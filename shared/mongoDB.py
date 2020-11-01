@@ -111,10 +111,10 @@ class mongodb(object):
             return -1
         
     @logger.catch
-    def get_pk_info(self):
+    def get_pk_info(self,mainPID):
         try:
             pkConfig = self.db["pkConfig"]
-            pk_list = pkConfig.find_one({"isActivated":1},{"_id":0})
+            pk_list = pkConfig.find_one({"isActivated":1,"mainPID":mainPID},{"_id":0})
             logger.debug("get pk config success")
             return pk_list
         except Exception as e:

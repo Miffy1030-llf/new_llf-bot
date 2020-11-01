@@ -51,17 +51,18 @@ def DecodeData(ori:str):
 def SendRequest(url:str,data:str):
     Headers = {
         'Content-Type': 'application/json', 
-        'Origin': 'https://www.tao-ba.club', 
+        'Origin': 'https://www.taoba.club', 
         'Cookie': 'l10n=zh-cn', 
         'Accept-Language': 'zh-cn', 
         'Host': 'www.tao-ba.club', 
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.5 Safari/605.1.15', 
-        'Referer': 'https://www.tao-ba.club/', 
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_1_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.1 Mobile/15E148 Safari/604.1', 
+        'Referer': 'https://www.taoba.club/', 
         'Accept-Encoding': 'gzip, deflate, br', 
-        'Connection': 'keep-alive'
+        'Connection': 'keep-alive',
+        
     }
     Data = EncodeData(data)
-    Res = requests.post(url=url,data=Data,headers=Headers)
+    Res = requests.post(url=url,data=Data,headers=Headers,verify=False)
     ResText = Res.text
     return DecodeData(ResText)
 
@@ -71,7 +72,7 @@ def GetDetail(pro_id:str):
     try:
     
         Data='{{"id":"{0}","requestTime":{1},"pf":"h5"}}'.format(pro_id,str(time.time()*1000))
-        Response=SendRequest('https://www.tao-ba.club/idols/detail',Data)
+        Response=SendRequest('https://www.taoba.club/idols/detail',Data)
         return Project(str(Response['datas']['id']),
             Response['datas']['title'],
             str(Response['datas']['start']),
