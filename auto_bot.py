@@ -56,11 +56,8 @@ async def private_message_handler(app: bGraia.GraiaMiraiApplication,message: bGr
 @logger.catch
 async def group_message_handler(app: bGraia.GraiaMiraiApplication, message: bGraia.MessageChain, group: bGraia.Group):
     msg = message.asDisplay()
-    if group.id in qqgroup.pk_groups:
-        if "中贡献了" in msg:
-            msg = pk.PK().format_msg()
-            if msg:
-                await app.sendGroupMessage(group,bGraia.MessageChain.create([bGraia.Plain(msg)]).asSendable())
+    # if group.id in qqgroup.pk_groups:
+        # pass
         
     # if msg == "jz" or msg == "集资":
     #     if group.id in qqgroup.auto_reply_groups: 

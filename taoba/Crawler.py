@@ -54,7 +54,7 @@ def SendRequest(url:str,data:str):
         'Origin': 'https://www.taoba.club', 
         'Cookie': 'l10n=zh-cn', 
         'Accept-Language': 'zh-cn', 
-        'Host': 'www.tao-ba.club', 
+        'Host': 'www.taoba.club', 
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_1_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.1 Mobile/15E148 Safari/604.1', 
         'Referer': 'https://www.taoba.club/', 
         'Accept-Encoding': 'gzip, deflate, br', 
@@ -88,7 +88,7 @@ def GetPurchaseList(pro_id:str):
     #获得所有人购买的数据，以list形式返回
     try:
         Data='{{"ismore":false,"limit":15,"id":"{0}","offset":0,"requestTime":{1},"pf":"h5"}}'.format(pro_id,int(time.time()*1000))
-        Response=SendRequest('https://www.tao-ba.club/idols/join',Data)
+        Response=SendRequest('https://www.taoba.club/idols/join',Data)
         Founderlist = []
         Cleared = False
         pages = 0
@@ -105,7 +105,7 @@ def GetPurchaseList(pro_id:str):
             if len(Response['list']) == 15:
                 pages += 1
                 Data='{{"ismore":true,"limit":15,"id":"{0}","offset":{2},"requestTime":{1},"pf":"h5"}}'.format(pro_id,int(time.time()*1000),pages*15)
-                Response=SendRequest('https://www.tao-ba.club/idols/join',Data)
+                Response=SendRequest('https://www.taoba.club/idols/join',Data)
             else:
                 Cleared = True
         return Founderlist
@@ -115,7 +115,7 @@ def GetPurchaseList(pro_id:str):
 @logger.catch
 def GetGoodDetail(pro_id:str):
     Data='{{"id":"{0}","requestTime":{1},"pf":"h5"}}'.format(pro_id,str(time.time()*1000))
-    Response=SendRequest('https://www.tao-ba.club/idols/detail',Data)
+    Response=SendRequest('https://www.taoba.club/idols/detail',Data)
     goods_list = Response['datas']["goods"]
     return_list = []
     for good in goods_list:
@@ -127,7 +127,7 @@ def GetGoodDetail(pro_id:str):
 @logger.catch
 def GetRank(pro_id:str):
     Data='{{"id":"{0}","requestTime":{1},"pf":"h5","iscoopen":0,"_version_":1}}'.format(pro_id,str(time.time()*1000))
-    Response=SendRequest('https://www.tao-ba.club/idols/join/rank',Data)
+    Response=SendRequest('https://www.taoba.club/idols/join/rank',Data)
     rank = [item['nick'] for item in Response["list"]]
     return rank
 

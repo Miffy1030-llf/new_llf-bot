@@ -24,7 +24,7 @@ class TaobaMonitor(object):
                 for single_raiseId in _raise.get("raise"):
                     msg = self.monitor_single_raise(single_raiseId)
                     if msg and msg != "error" and msg != "":
-                        url = "https://www.tao-ba.club/#/pages/idols/detail?id=" + single_raiseId
+                        url = "https://www.taoba.club/#/pages/idols/detail?id=" + single_raiseId
                         msg += "\n支持🔗:" + url
                         self.bot.send_group_message([qq], msg)
                         
