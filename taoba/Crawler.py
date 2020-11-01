@@ -62,7 +62,7 @@ def SendRequest(url:str,data:str):
         
     }
     Data = EncodeData(data)
-    Res = requests.post(url=url,data=Data,headers=Headers,verify=False)
+    Res = requests.post(url=url,data=Data,headers=Headers)
     ResText = Res.text
     return DecodeData(ResText)
 
