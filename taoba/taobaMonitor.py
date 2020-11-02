@@ -26,11 +26,12 @@ class TaobaMonitor(object):
                     if msg and msg != "error" and msg != "":
                         url = "https://www.taoba.club/#/pages/idols/detail?id=" + single_raiseId
                         msg += "\n支持🔗:" + url
-                        self.bot.send_group_message([qq], msg)
+                        # self.bot.send_group_message([qq], msg)
                         
                         msg_pk = pk.PK(str(single_raiseId)).format_msg()
                         if msg_pk:
-                            self.bot.send_group_message([qq], msg_pk)
+                            pass
+                            # self.bot.send_group_message([qq], msg_pk)
             time.sleep(2)
 
     def monitor_single_raise(self, _raise):
@@ -42,7 +43,8 @@ class TaobaMonitor(object):
         if ul:
             try:
                 for i in range(len(ul)):
-                    exist = self.db.db["items"].find_one({"pro_id":_raise,"time": int(ul[i].time)})
+                    hashValue = util.get_hash([str(ul[i].user_id), str(ul[i].time)])
+                    exist = self.db.db["items"].find_one({"hash":hashValue})
                     if not (exist is None):
                         break
                     uid = ul[i].user_id

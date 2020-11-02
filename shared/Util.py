@@ -1,7 +1,8 @@
 import configparser
 import os
 import time
-
+import hashlib
+from typing import List
 def getConfig(section, key):
     config = configparser.ConfigParser()
     config.read( os.path.join(os.path.dirname(__file__), 'config.ini'))
@@ -29,3 +30,14 @@ def convert_timestr_to_timestamp(time_str):
     """
     timestamp = time.mktime(time.strptime(time_str, "%Y-%m-%d %H:%M:%S"))
     return timestamp
+
+def get_hash(wordings:List[str])->str:
+    md = hashlib.md5()
+    for wording in wordings:
+        md.update(wording.encode("utf-8"))
+    return md.hexdigest()
+
+if __name__ == "__main__":
+    print(get_hash(["13003020032","198989"]))
+    print("\n")
+    print(get_hash(["13003020032","198989"]))

@@ -3,6 +3,8 @@ import threading
 from shared import Util
 from loguru import logger
 import os
+import shared.Util as util
+
 class mongodb(object):
     
     _instance_lock = threading.Lock()
@@ -91,7 +93,8 @@ class mongodb(object):
     def insert_item(self, person):
         try:
             item_collection = self.db["items"]
-            item_collection.insert_one({"user_id": person.user_id, "pro_id": person.pro_id, "nickname":person.nickname, "amount": round(float(person.amount),2),"time":person.time})
+            hashValue = util.get_hash([str(person.user_id),str(person.time)])
+            item_collection.insert_one({"user_id": person.user_id, "pro_id": person.pro_id, "nickname":person.nickname, "amount": round(float(person.amount),2),"time":person.time,"hash":hashValue})
             logger.debug("insert purchase item, {},{}".format(person.nickname, person.amount))
             return True
         except Exception as e:
