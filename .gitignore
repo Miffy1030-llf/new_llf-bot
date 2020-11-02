@@ -6,6 +6,7 @@
 *.sh
 *.pyc
 llf.txt
+llf.xls
 *getData.py
 
 /node_modules
