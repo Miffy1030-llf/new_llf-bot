@@ -133,6 +133,10 @@ def GetRank(pro_id:str):
 
 if __name__ == "__main__":
     # print(GetPurchaseList("8937"))
-    print(GetGoodDetail("9805"))
-    # # GetGoodDetail("4830")
+    # print(GetPurchaseList("9895"))
+    # GetGoodDetail("9895")
     # GetGoodDetail("8937")
+    a = GetPurchaseList("9895")
+    for i in a:
+
+        print("{}\t{}\n".format(i.nickname,i.amount))
