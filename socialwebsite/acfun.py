@@ -66,8 +66,7 @@ if __name__ == "__main__":
                 db.db["config"].update_one({"name":"刘力菲"},{"$addToSet": {"acfunids":aid}})
                 link = "https://www.acfun.com/v/ac"+aid
                 title = htmlEtree.xpath('//*[@id="ac-space-video-list"]/a[{}]/figure//figcaption/p[1]'.format(i))[0].attrib['title']
-                
-                bot.send_temp_message(1084176330, [1075719810], msg.format(title, link))
+                bot.send_group_message(qq,msg.format(title, link))
             page += 1
         time.sleep(3600)
     
