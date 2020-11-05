@@ -231,5 +231,12 @@ class mongodb(object):
         except Exception as e:
             logger.error(e)
             return []
+        
+    def get_acfun_number(self,name):
+        try:
+            num = self.db["config"].find_one({"name":name},{"acfunids":1})
+            return num
+        except Exception as e:
+            return 0
 if __name__ == '__main__':
     mongodb().get_lottery_info()
