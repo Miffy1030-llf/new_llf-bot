@@ -131,7 +131,7 @@ function createChatroom() {
 
 function onChatroomConnect(chatroomInfo) {
     logger.info('进入聊天室', chatroomInfo);
-    getHistoryMsgs()
+    // getHistoryMsgs()
 }
 
 function onChatroomWillReconnect(obj) {

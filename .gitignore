@@ -9,5 +9,5 @@ llf.txt
 *.xls
 *getData.py
 
-/node_module
+/node_modules
 *key/
