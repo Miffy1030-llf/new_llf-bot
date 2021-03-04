@@ -21,17 +21,23 @@ class TaobaMonitor(object):
             raise_list = self.db.get_raise_list()
             for _raise in raise_list:
                 qq = _raise.get("qq")
+                plantform_type = _raise.get("plantform_type")
                 for single_raiseId in _raise.get("raise"):
-                    msg = self.monitor_single_raise(single_raiseId)
+                    msg, head_num, money = self.monitor_single_raise(single_raiseId)
                     if msg and msg != "error" and msg != "":
-                        url = "https://www.taoba.club/#/pages/idols/detail?id=" + single_raiseId
+                        if plantform_type == 0:
+                            url = "https://www.taoba.club/#/pages/idols/detail?id=" + single_raiseId
+                        else:
+                            url = ""
                         msg += "\n支持🔗:" + url
-                        self.bot.send_group_message([qq], msg)
+                        msg += "\n当前总金额{}元， 总人数{}人".format(round(money,1),round(head_num,0))
+                        msg += "*" * 20
+                        msg += "\n"
+                        self.bot.send_group_message(qq, msg)
                         
                         msg_pk = pk.PK(str(single_raiseId)).format_msg()
                         if msg_pk:
-                            pass
-                            self.bot.send_group_message([qq], msg_pk)
+                            self.bot.send_group_message(qq, msg_pk)
             time.sleep(2)
 
     def monitor_single_raise(self, _raise):
@@ -61,26 +67,9 @@ class TaobaMonitor(object):
                             msg += "*" * 20
                             msg += "\n"
                             head_num, money = total[0], total[1]
-
+                            
                             self.db.update_raise(_raise, money, head_num)
-                        # if _raise != "8937":
-                        #     if _raise == "9609":
-                        #         allRank = GetRank(_raise)[:10]
-                        #         allRankStr = ''.join(["{}. {}\n".format(i, allRank[i]) for i in range(len(allRank))])
-                        #         msg += "*" * 20
-                        #         msg += "\n当前：\n"
-                        #         msg += allRankStr
-                                
-                        #     else:
-                        #         total = self.db.get_total_count_and_money_this_pro(_raise)
-                        #         try:
-                        #             head_num, money = total[0], total[1]
-                        #         except Exception as e:
-                        #             head_num, money = 0,0
-                        #         finally:
-                        #             if msg != "":
-                        #                 msg += "\n当前集资进度{}元\n参与人数:{}\n人均{}元\n截止{}".format(money, head_num, round(money / head_num, 1), util.convert_timestamp_to_timestr(int(detail.endtime) * 1000))
-                return msg
+                return msg, head_num, money
             except Exception as e:
                 print(e)
                 return "error"

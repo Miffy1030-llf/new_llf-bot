@@ -136,7 +136,9 @@ if __name__ == "__main__":
     # print(GetPurchaseList("9895"))
     # GetGoodDetail("9895")
     # GetGoodDetail("8937")
-    a = GetPurchaseList("9895")
-    for i in a:
+    # a = GetPurchaseList("9895")
+    # for i in a:
 
-        print("{}\t{}\n".format(i.nickname,i.amount))
+    #     print("{}\t{}\n".format(i.nickname,i.amount))
+    s="11289$XZzOmmhz5zgwhqEKxkuAOKn+rB3yUFS7gULhsvBcyrMWddMQDIHl8Pz3KaXpOkqceDO7nUDGZJocliLpizPmr6T6/ot1Scnt0z2YyO7K+P/Jy/8TS9/9xG3ry3k2FQoWU4pXeE+TOB4bqlhczQfDYGcSmgpkUd3H8TQuBo1xsxdPMJuTFVFAAxgY4DQyHHLfTarb1XN/CzyiQYm8H+CXXhSV0hoJbTJMXs8cMBMyy1DScoK3H1Zinyv8MpE4L4TP1pwfnCb1LYO59OI4ueArhL3MpiTxRpIhnuDjWlf2n0kapqSZTgFMR1A1K8Mn3a3y1yJpkifoQMiN8Tp0T23h67N5SzsRPE7zz3I9XsLj5JsHYXLNAKZzwDx4VaWMaM6zU7N1Se2jB6/uN8TzaC+90lgyv4WFlnkEebQCKG9sFvijVzJoia4Qr1S9YK9zTmIVEpjGydUUAhYxKJySmkzErfhZFdU0y6gni4R21nYL7rKmxO0AeRgnugjLA5R0pFNweKEgrikLnZtERezh5I5x/6kTMEprjkYw0MTfXp3YTbHQzediKb9Fx5JDcMudIReFzRte031UDsYjSv3fUTetcl9kNJgSAq++q+fMZ8yfM3cU5dqScIpnPZapeoLMKFjZbWzkE+EwE06zBGHmPfcAkgghE9TTtCUxjzWtJWRM6YDc9lb/IRBq3WQx0FJjX/Y5JtZDFEtZE/jOp01Vmn1AbuAxtkpAKNHCXE1Kio1EdpdBdSpmHScLBHRcMzWhvfKPK+PGNn6Y0wQZFNFxk/DJaUXEsXojYBd5VQBcejGeiXhvfxcAy3xjrgtOjWg0eRfY+RAR4wg7HF1G1qwtlA1eXQeuR17sB/sd4JZvQe6hoV7C+p8OCLXnO+f7s+jBoknpWqv9+36SWfA9h7WxLTymYifWGhNQxHyN57okbd3YXeAd8rayYnZmiwOma8/XgySaHNmrtMKCz2K9aEl0OURqDoSD9Edr7lS9HC3vcANctNLiGfLVXPXhAm6DQlpn27quTKIF9+S9rdgWdDXXnuZwAuOxwwzolK5+2z6PzoEK49iaHrhdRIbxhZV8Zg1SU8egvML/56WTVLbrt0YmBXwIiIzGwaFct9um8TDhjpOiGEt6LgXOaTKOgD72LJY8mzXPgzzbGbqK29INPalBwlXx02J6UYMAd83rhfN908+7ADfRzoWKxKzH5HYM/FcvLgEwM/XnxFiYcWEASpwiKb8CTOKe89pN0uoX5e6m0S23dN/dsLcwztVOQozFNv4mvWLSkOgY+cXdmre445UtXW98VwtJPW2+wJ+xjiTRfX7RRutXrzRyQY+wjoQr8Zy6FHV8fz8StHKLN8B+gvPXSVYcHCneEMbUhGuHGf46X2DBHBOkEukcgULTLLitSdNM9Jjn6NDfWp4zi1spMxvemrvSoKZbs9sAjqMiznG4MX09pDSY+rRjALi9YN5hIvGySPu9fc0EaRIphEKIOOMbQaupQ5huN6xWWzLn5qgQtHMx9t0F48/VwPHq6fBdH7FmL7+WDyy41afihgO1E3hLESCni2JaQodR6hai7ECDTbNpyM6at+c7lrHwaxaGxEs6GHG4bYYIFBUvS5ClGxO8kPDR31lqmaWtMYJG/1Z9TDNHkDrnd8hwqYQpjRsu/FAeLIU+iGMrbBD/1eOTLWZVaJ06foEWfqHW5MXh7qx3mNeQ7SVbRq95NbJfywzRBZhzy/NDzjCVZV7NczPdYpucL7DCdAHth0sfZq3p3AbmLo3hFh/VopXCrW3hsjK1oNf21T1pfw++bgVLS/iINaY1Vu2F/cD7fEDdRP4="
+    print(DecodeData(s))

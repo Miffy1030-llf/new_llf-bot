@@ -91,4 +91,4 @@ class GraiaBot(object):
             self.sync_send_temp_message(group, qq, message)
             
 if __name__ == "__main__":
-    GraiaBot().send_temp_message(1084176330, [1075719810], "test")
+    GraiaBot().send_group_message([939952364],"test")

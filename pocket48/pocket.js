@@ -2,17 +2,40 @@
 let SDK = require('./NIM_Web_SDK_nodejs_v7.1.0.js')
 const logger = require('./log.js')
 const axios = require("axios");
-let roomid = 67342026;
-groups = [1084176330]
+const loadIni = require('read-ini-file')
+const path = require('path')
+const MongoClient = require('mongodb').MongoClient;
+
+const fix = path.join(__dirname, 'config.ini')
+const ret = loadIni.sync(fix)
+
+const roomid = ret["pocket"]["roomid"];
+
+const liveqq = ret["pocket"]["liveqq"].split(" ")
+const messageqq = ret["pocket"]["messageqq"].split(" ")
+
 var chatroom;
 var session = ""
 
+const host = ret["mirai"]["host"]
+const port = ret["mirai"]["port"]
+const url = "http://" + host + ":" + port;
+
+const mongodbPort = ret["mongodb"]["port"]
+const user = ret["mongodb"]["user"]
+const passwd = ret["mongodb"]["passwd"]
+const db = ret["mongodb"]["db"
+]
+const mongodbUrl = "mongodb://" + user + ":" + passwd + "@" + host + ":" + mongodbPort + "/" + db
+
+
+  
 function initNIM() {
     nim = SDK.NIM.getInstance({
         debug: true,
-        appKey: "632feff1f4c838541ab75195d1ceb3fa",
-        account: "20200522113559_l7yeptrk2202zmj",
-        token: "e57kbnr06d",
+        appKey: ret["pocket"]["appKey"],
+        account: ret["pocket"]["account"],
+        token: ret["pocket"]["token"],
         onconnect: onConnect,
         onwillreconnect: onWillReconnect,
         ondisconnect: onDisconnect,
@@ -84,9 +107,9 @@ function onError(error) {
 */
 function createChatroom() {
     chatroom = new SDK.Chatroom({
-        appKey: "632feff1f4c838541ab75195d1ceb3fa",
-        account: "20200522113559_l7yeptrk2202zmj",
-        token: "e57kbnr06d",
+        appKey: ret["pocket"]["appKey"],
+        account: ret["pocket"]["account"],
+        token: ret["pocket"]["token"],
         chatroomId: roomid,
         chatroomAddresses: [
             address,
@@ -108,7 +131,7 @@ function createChatroom() {
 
 function onChatroomConnect(chatroomInfo) {
     logger.info('进入聊天室', chatroomInfo);
-    // getHistoryMsgs()
+    getHistoryMsgs()
 }
 
 function onChatroomWillReconnect(obj) {
@@ -150,7 +173,7 @@ function onChatroomMsgs(msgs) {
 
 function getHistoryMsgs() {
     chatroom.getHistoryMsgs({
-        timetag: 1601456458000,
+        timetag: 1614840227000,
         limit: 100,
         reverse: true,
         msgTypes: ['text'],
@@ -161,81 +184,56 @@ function getHistoryMsgs() {
 function getHistoryMsgsDone(error, obj) {
     // logger.info('获取聊天室历史' + (!error ? '成功' : '失败'), error, obj.msgs);
     // filterLLFMessage(obj.msgs)
-    for (var index in obj.msgs) {
+    
+        let data = {
+            "authKey": ret["mirai"]["authKey"]
+        }
+        return axios.post(url + "/auth", data).then(res => {
+            if (res.status == 200) {
+                session = res.data.session
+                data = {
+                    "sessionKey": session,
+                    "qq": ret["mirai"]["account"]
+                }
+                return axios.post(url + "/verify", data).then(res => {
+                    if (res.status == 200 && res.data.msg == "success") {
+                        for (var index in obj.msgs) {
 
-        var msg = obj.msgs[index]
-        custom = JSON.parse(msg.custom)
-        let text = custom.text
-        let role = custom.user.roleId
-        let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
+                            var msg = obj.msgs[index]
+                            custom = JSON.parse(msg.custom)
+                            let text = custom.text
+                            if (text == undefined) { 
+                                continue
+                            }
+                            let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
+                            
+                            let axiosList = []
+                            send_message = [{
+                                "type": "Plain",
+                                "text": text
+                            }]
+                            save2DB("pmsg",text,time)
+                            for (var i = 0; i < messageqq.length; i++) {
+                                axiosList.push(send_msg_to_group(session, messageqq[i], send_message))
+                            }
+                            axios.all(axiosList)
+                        }
+                    } else {
+                        logger.info("[error]" + res.status + "\t" + res.data.msg)
+                    }
+                }).catch(err => {
+                    logger.info(err)
+                    logger.info("qq verify error")
+                })
+            } else {
+                logger.info("[error]" + res.status + "\t" + res.data.msg)
+            }
+        }).catch(err => {
+            logger.info(err)
+            logger.info("qq auth error")
+        })
 
-        // if (text) {
-        //     console.log(time + "\n" + custom.messageType + "    " + text)
-        //     var url = "http://122.51.213.140:8080";
-        //     let data = {
-        //         "authKey": "llf19951030"
-        //     }
-        //     return axios.post(url + "/auth", data).then(res => {
-        //         if (res.status == 200) {
-        //             session = res.data.session
-        //             data = {
-        //                 "sessionKey": session,
-        //                 "qq": 3140852636
-        //             }
-        //             return axios.post(url + "/verify", data).then(res => {
-        //                 if (res.status == 200 && res.data.msg == "success") {
-        //                     data1 = {
-        //                         "sessionKey": session,
-        //                         "target": 877177747,
-        //                         "messageChain": [{
-        //                             "type": "Plain",
-        //                             "text": "message1"
-        //                         }]
-        //                     }
-        //                     data2 = {
-        //                         "sessionKey": session,
-        //                         "target": 877177747,
-        //                         "messageChain": [{
-        //                             "type": "Plain",
-        //                             "text": "message2"
-        //                         }]
-        //                     }
-        //                     return axios.all([
-        //                         axios.post(url + "/sendGroupMessage", data1).then(res => {
-        //                             if (res.status == 200) {
-        //                                 logger.info(res.data)
-        //                             } else {
-        //                                 logger.info("[error]" + res.status + "\t" + res.data.msg)
-        //                             }
-        //                         }).catch(err => {
-        //                             logger.info(err)
-        //                             logger.info("qq send error")
-        //                         })
-        //                     ], [
-        //                         axios.post(url + "/sendGroupMessage", data2).then(res => {
-        //                             if (res.status == 200) {
-        //                                 logger.info(res.data)
-        //                             } else {
-        //                                 logger.info("[error]" + res.status + "\t" + res.data.msg)
-        //                             }
-        //                         }).catch(err => {
-        //                             logger.info(err)
-        //                             logger.info("qq send error")
-        //                         })
-        //                     ])
-        //                 }
-        //             }).catch(err => {
-        //                 logger.error(err)
-        //                 logger.info("qq verify error")
-        //             })
-        //         }
-        //     }).catch(err => {
-        //         logger.info("qq auth error")
-        //     })
-        // }
-    }
-
-    console.log(msg.time) // filterLLFMessage(obj.msgs)
+  // filterLLFMessage(obj.msgs)
 }
 
 function filterLLFMessage(msgs) {
@@ -247,8 +245,9 @@ function filterLLFMessage(msgs) {
             role = custom.user.roleId
         }
         var live = 0
+        var miffy = ret["pocket"]["miffy"]
         if (role === 3) {
-            if (msg.from === "20190415141138_vs435su4fi1dw72") {
+            if (msg.from === miffy) {
                 logger.info('收到小飞消息', msg);
                 let text = custom.text
                 let time = new Date(msg.time).Format('yy-MM-dd hh:mm:ss')
@@ -265,6 +264,7 @@ function filterLLFMessage(msgs) {
                         "type": "Plain",
                         "text": message
                     }]
+                    save2DB("pmsg",message,time)
                 }
                 else if (msg.text == "偶像翻牌") { 
                     question = custom.question
@@ -280,6 +280,7 @@ function filterLLFMessage(msgs) {
                         "type": "Plain",
                         "text": message
                     }]
+                    save2DB("pqa",message,time)
                 }
                 let live_cover = custom.liveCover
                 if (live_cover) {
@@ -309,7 +310,8 @@ function filterLLFMessage(msgs) {
                     }, {
                         "type": "Image",
                         "url": msg.file.url
-                    }]
+                        }]
+                    save2DB("pimg",msg.file.url,time)
                 } else if (msg.type === "audio") {
                     logger.info("[INFO]get audio")
                     message = "【刘力菲房间】\n【语音】[" + time + "]-GNZ48-刘力菲: "
@@ -319,7 +321,8 @@ function filterLLFMessage(msgs) {
                     }, {
                         "type": "Voice",
                         "url": msg.file.url
-                    }]
+                        }]
+                    save2DB("pvoi",msg.file.url,time)
                 } else if (msg.type === "video") {
                     logger.info("[INFO]get video")
                     message = "【刘力菲房间】\n【视频】[" + time + "]-GNZ48-刘力菲: " + msg.file.url
@@ -327,6 +330,7 @@ function filterLLFMessage(msgs) {
                         "type": "Plain",
                         "text": message
                     }]
+                    save2DB("pvid",msg.file.url,time)
                 }
             } else {
                 let text = custom.text
@@ -341,111 +345,37 @@ function filterLLFMessage(msgs) {
                         "text": message
                     }]
                 }
+                save2DB("pother",message,time)
             }
-
-            var url = "http://122.51.213.140:8080";
+            
             let data = {
-                "authKey": "llf19951030"
+                "authKey": ret["mirai"]["authKey"]
             }
             return axios.post(url + "/auth", data).then(res => {
                 if (res.status == 200) {
                     session = res.data.session
                     data = {
                         "sessionKey": session,
-                        "qq": 3140852636
+                        "qq": ret["mirai"]["account"]
                     }
                     return axios.post(url + "/verify", data).then(res => {
                         if (res.status == 200 && res.data.msg == "success") {
                             if (live === 1) {
-                                data1 = {
-                                    "sessionKey": session,
-                                    "target": 443177702,
-                                    "messageChain": send_message
+                                axiosList = []
+                                for (var qq in liveqq) {
+                                    axiosList.append(send_msg_to_group(session, qq, send_message))
                                 }
-                                data2 = {
-                                    "sessionKey": session,
-                                    "target": 244898692,
-                                    "messageChain": send_message
-                                }
-                                data3 = {
-                                    "sessionKey": session,
-                                    "target": 1071838122,
-                                    "messageChain": send_message
-                                }
-                                return axios.all([
-                                    axios.post(url + "/sendGroupMessage", data1).then(res => {
-                                        if (res.status == 200) {
-                                            logger.info(res.data)
-                                        } else {
-                                            logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                        }
-                                    }).catch(err => {
-                                        logger.info(err)
-                                        logger.info("qq send 443177702 error")
-                                    })
-                                ], [
-                                    axios.post(url + "/sendGroupMessage", data2).then(res => {
-                                        if (res.status == 200) {
-                                            logger.info(res.data)
-                                        } else {
-                                            logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                        }
-                                    }).catch(err => {
-                                        logger.info(err)
-                                        logger.info("qq send 244898692 error")
-                                    })
-                                ],
-                                [
-                                    axios.post(url + "/sendGroupMessage", data3).then(res => {
-                                        if (res.status == 200) {
-                                            logger.info(res.data)
-                                        } else {
-                                            logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                        }
-                                    }).catch(err => {
-                                        logger.info(err)
-                                        logger.info("qq send 1071838122 error")
-                                    })
-                                ])
+                                
+                                return axios.all(axiosList)
                             } else {
-                                data2 = {
-                                    "sessionKey": session,
-                                    "target": 244898692,
-                                    "messageChain": send_message
+                                axiosList = []
+                                for (var qq in messageqq) {
+                                    axiosList.append(send_msg_to_group(session, qq, send_message))
                                 }
-                                data3 = {
-                                    "sessionKey": session,
-                                    "target": 1071838122,
-                                    "messageChain": send_message
-                                }
-                                return axios.all([
-                                    axios.post(url + "/sendGroupMessage", data2).then(res => {
-                                        if (res.status == 200) {
-                                            logger.info(res.data)
-                                        } else {
-                                            logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                        }
-                                    }).catch(err => {
-                                        logger.info(err)
-                                        logger.info("qq send 244898692 error")
-                                    })
-                                ],
-                                [
-                                    axios.post(url + "/sendGroupMessage", data3).then(res => {
-                                        if (res.status == 200) {
-                                            logger.info(res.data)
-                                        } else {
-                                            logger.info("[error]" + res.status + "\t" + res.data.msg)
-                                        }
-                                    }).catch(err => {
-                                        logger.info(err)
-                                        logger.info("qq send 244898692 error")
-                                    })
-                                ])
+                                
+                                return axios.all(axiosList)
+
                             }
-
-
-
                         } else {
                             logger.info("[error]" + res.status + "\t" + res.data.msg)
                         }
@@ -482,40 +412,39 @@ Date.prototype.Format = function (fmt) {
     return fmt;
 }
 
-function send_msg_to_group(msg) {
-    var url = "http://122.51.213.140:8080";
-    let data = {
-        "authKey": "llf19951030"
+function send_msg_to_group(session, qq, send_message) {
+    if (send_message == undefined){ 
+        return axios.default
     }
-    return axios.post(url + "/auth", data).then(res => {
+    data1 = {
+        "sessionKey": session,
+        "target": qq,
+        "messageChain": send_message
+    }
+    
+    return axios.post(url + "/sendGroupMessage", data1).then(res => {
         if (res.status == 200) {
-            session = res.data.session
-            data = {
-                "sessionKey": session,
-                "qq": 3140852636
-            }
-            return axios.post(url + "/verify", data).then(res => {
-                if (res.status == 200 && res.data.msg == "success") {
-                    data = {
-                        "sessionKey": session,
-                        "target": 877177747,
-                        "messageChain": [{
-                            "type": "Plain",
-                            "text": "msg"
-                        }]
-                    }
-                    return axios.post(url + "/sendGroupMessage", data).then(res => {
-                        if (res.status == 200) {
-                            console.log(res.data)
-                        }
-                    })
-                }
-            })
+            logger.info(res.data)
+        } else {
+            logger.info("[error]" + res.status + "\t" + res.data.msg)
         }
+    }).catch(err => {
+        logger.info(err)
+        logger.info("qq send error" + qq)
     })
-
-
 }
 
+function save2DB(type, message,time) { 
+    MongoClient.connect(mongodbUrl, function(err, db) {
+        if (err) { logger.info(err);db.close();return };
+        
+        var obj = { "type": type, "msg": message, "time": time }
+        db.db("Miffy").collection("messages").insertOne(obj, function (err, res) { 
+            if (err) { logger.info(err);db.close();return };
+            console.log("文档插入成功");
+            db.close();
+        })
+    });
+}
 
 initNIM()
