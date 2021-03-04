@@ -72,7 +72,7 @@ class TaobaMonitor(object):
                 return msg, head_num, money
             except Exception as e:
                 print(e)
-                return "error"
+                return "error",0,0
         
 if __name__ == '__main__':
     TaobaMonitor().start_monitor()
