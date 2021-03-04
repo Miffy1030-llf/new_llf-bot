@@ -362,15 +362,15 @@ function filterLLFMessage(msgs) {
                         if (res.status == 200 && res.data.msg == "success") {
                             if (live === 1) {
                                 axiosList = []
-                                for (var qq in liveqq) {
-                                    axiosList.append(send_msg_to_group(session, qq, send_message))
+                                for (var i = 0; i < liveqq.length; i++) {
+                                    axiosList.push(send_msg_to_group(session, messageqq[i], send_message))
                                 }
                                 
                                 return axios.all(axiosList)
                             } else {
                                 axiosList = []
-                                for (var qq in messageqq) {
-                                    axiosList.append(send_msg_to_group(session, qq, send_message))
+                                for (var i = 0; i < messageqq.length; i++) {
+                                    axiosList.push(send_msg_to_group(session, messageqq[i], send_message))
                                 }
                                 
                                 return axios.all(axiosList)
