@@ -10,9 +10,7 @@ certifi
 chardet
 click
 configparser
-cqhttp
 decorator
-get
 graia-application-mirai
 graia-broadcast
 graphviz
@@ -32,8 +30,6 @@ mccabe
 multidict 
 objgraph 
 olefile 
-paddlepaddle-tiny 
-post 
 protobuf 
 public 
 pycodestyle 
@@ -47,9 +43,7 @@ pytz
 query-string 
 redis 
 regex 
-request 
 requests 
-singledispatchmethod 
 six 
 soupsieve 
 style 
@@ -57,9 +51,6 @@ toml
 tqdm 
 typed-ast 
 tzlocal 
-update 
 urllib3 
 websockets 
-Werkzeug 
-wrapt 
 yarl==1.4.2 
