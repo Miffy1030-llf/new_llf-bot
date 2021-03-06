@@ -79,6 +79,7 @@ class TaobaMonitor(object):
                         if ul[i].amount >= 10.3:
                             cards = self.drawCard(ul[i].amount//10)
                             cards_msg = "恭喜获得刘言菲语{}".format(cards)
+                            self.db.insert_cards(uid,user_name,cards)
                         head_num, money = total[0], total[1]
                         if cards_msg != "":
                             msg += cards_msg

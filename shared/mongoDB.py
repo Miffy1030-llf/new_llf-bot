@@ -1,3 +1,8 @@
+import os,sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
+# __file__获取执行文件相对路径，整行为取上一级的上一级目录
+sys.path.append(BASE_DIR)
+
 import pymongo
 import threading
 from shared import Util
@@ -244,5 +249,13 @@ class mongodb(object):
             return num
         except Exception as e:
             return 0
+    
+    @logger.catch
+    def insert_cards(self,uid,name,cards):
+        if not self.db["UserInfo"].find_one({"uid":uid}):
+            self.db["UserInfo"].insert({"uid":uid})
+        self.db['UserInfo'].find_one_and_update({"uid":uid},{"$set":{"name":name}})
+        for card in cards:
+            self.db['UserInfo'].find_one_and_update({"uid":uid},{"$push": {"cards":card}})
 if __name__ == '__main__':
-    mongodb().get_lottery_info()
+    mongodb().insert_cards("10764705","test",['1','2','3'])
