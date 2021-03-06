@@ -192,7 +192,13 @@ class mongodb(object):
             self.db["monitor"].update_one({"pro_id": pid}, {"$set": {"current": money, "total": head_num}})
         except Exception as e:
             logger.exception(e)
-            
+    @logger.catch
+    def get_raise_info(self, pid):
+        try:
+            return self.db["monitor"].find_one({"pro_id": pid},{"current":1,"total":1})
+        except Exception as e:
+            logger.exception(e)
+    
     @logger.catch
     def check_birth_status(self, pid):
         try:

@@ -23,7 +23,7 @@ class PK(object):
         
     @logger.catch
     def __initValues(self):
-        if not self.pk_info is None and self.pk_info == -1:
+        if self.pk_info is None or self.pk_info == -1:
             return False
         else:
             self.__name = self.pk_info.get("name")
