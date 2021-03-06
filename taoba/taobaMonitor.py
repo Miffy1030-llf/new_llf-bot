@@ -94,7 +94,7 @@ class TaobaMonitor(object):
         count = len(result)
         res = []
         for i in range(num):
-            drawNum = random.randint(0,count)
+            drawNum = random.randint(0,count-1)
             res.append(result[drawNum].get("name").split('.')[0])
         return res
 if __name__ == '__main__':
